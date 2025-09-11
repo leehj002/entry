@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로그래밍과의 연결</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #E8F5E8 0%, #F0F8FF 50%, #FFF5F5 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #AED6F1 0%, #D2B4DE 50%, #F9E79F 100%);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #34495E;
+            margin-bottom: 20px;
+        }
+
+        .content-section {
+            padding: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #FFE4E1, #E8F4F8);
+            border-radius: 20px;
+        }
+
+        .programming-section {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            color: white;
+        }
+
+        .code-example {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .code-line {
+            margin: 8px 0;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #3498DB;
+            transition: all 0.5s ease;
+        }
+
+        .code-line.highlight {
+            background: rgba(231, 76, 60, 0.3);
+            border-left-color: #E74C3C;
+            transform: translateX(10px);
+        }
+        
+        .control-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #85C1E9, #AED6F1);
+            border: 3px solid #FFFFFF;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            color: #2C3E50;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(133,193,233,0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2rem; }
+            .section-title { font-size: 2rem; }
+            .content-section { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1 class="main-title">🔢 순차 구조 배우기</h1>
+            <p class="subtitle">차례대로 하나씩! 순서의 중요성을 배워보아요</p>
+        </div>
+        
+        <!-- 프로그래밍 연결 -->
+        <div class="content-section">
+            <h2 class="section-title">💻 프로그래밍과의 연결</h2>
+            
+            <div class="programming-section">
+                <h3 style="text-align: center; font-size: 2rem; margin-bottom: 30px;">
+                    🔧 컴퓨터 프로그램에서의 순차 구조
+                </h3>
+                
+                <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 30px; text-align: center;">
+                    컴퓨터 프로그램도 순차 구조를 따라 실행돼요!<br>
+                    코드를 위에서부터 아래로 한 줄씩 차례대로 실행합니다.
+                </p>
+                
+                <div class="code-example">
+                    <h4 style="margin-bottom: 20px; font-size: 1.3rem;">📋 간단한 프로그램 예시:</h4>
+                    <div class="code-line" data-line="1">1. 변수 name에 "철수" 저장</div>
+                    <div class="code-line" data-line="2">2. "안녕하세요" 출력</div>
+                    <div class="code-line" data-line="3">3. name 출력 ("철수")</div>
+                    <div class="code-line" data-line="4">4. "반갑습니다!" 출력</div>
+                </div>
+                
+                <div class="control-buttons">
+                    <button class="btn" id="runCode">
+                        ▶️ 프로그램 실행
+                    </button>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-top: 20px;">
+                    <h4>💡 실행 결과:</h4>
+                    <div id="codeOutput" style="font-family: 'Courier New', monospace; font-size: 1.2rem; line-height: 1.8; margin-top: 10px;">
+                        실행 버튼을 눌러보세요!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 코드 실행 시뮬레이션
+        function runCodeSimulation() {
+            const codeLines = document.querySelectorAll('.code-line');
+            const output = document.getElementById('codeOutput');
+            const outputs = ["", "안녕하세요", "철수", "반갑습니다!"];
+            
+            output.innerHTML = "";
+            
+            let currentLine = 0;
+            
+            function executeLine() {
+                if (currentLine >= codeLines.length) return;
+                
+                // 현재 라인 하이라이트
+                codeLines.forEach(line => line.classList.remove('highlight'));
+                codeLines[currentLine].classList.add('highlight');
+                
+                // 출력 추가
+                if (outputs[currentLine]) {
+                    setTimeout(() => {
+                        output.innerHTML += outputs[currentLine] + "<br>";
+                    }, 500);
+                }
+                
+                setTimeout(() => {
+                    codeLines[currentLine].classList.remove('highlight');
+                    currentLine++;
+                    executeLine();
+                }, 1000);
+            }
+            
+            executeLine();
+        }
+        
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('runCode').addEventListener('click', runCodeSimulation);
+        });
+    </script>
+</body>
+</html>
