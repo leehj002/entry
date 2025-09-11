@@ -1,1 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>순차 구조 직접 해보기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #E8F5E8 0%, #F0F8FF 50%, #FFF5F5 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #AED6F1 0%, #D2B4DE 50%, #F9E79F 100%);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #34495E;
+            margin-bottom: 20px;
+        }
+
+        .content-section {
+            padding: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #FFE4E1, #E8F4F8);
+            border-radius: 20px;
+        }
+
+        .interactive-section {
+            background: linear-gradient(45deg, #E8F4F8 0%, #F0F8FF 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .practice-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .drag-items {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .drag-item {
+            background: linear-gradient(45deg, #FFE4E1, #FFB6C1);
+            padding: 15px 25px;
+            border-radius: 15px;
+            cursor: grab;
+            font-weight: 600;
+            color: #2C3E50;
+            border: 2px solid #FFFFFF;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .drag-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,182,193,0.4);
+        }
+
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+
+        .drop-zone {
+            background: linear-gradient(45deg, #F0F8FF, #E8F4F8);
+            border: 3px dashed #AED6F1;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7F8C8D;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #3498DB;
+            background: linear-gradient(45deg, #AED6F1, #D5E8FF);
+            color: #2C3E50;
+        }
+
+        .drop-zone.filled {
+            border-color: #27AE60;
+            background: linear-gradient(45deg, #D5F4E6, #ABEBC6);
+            color: #2C3E50;
+        }
+
+        .control-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #FFB6C1, #FFE4E1);
+            border: 3px solid #FFFFFF;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            color: #2C3E50;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(255,182,193,0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2rem; }
+            .section-title { font-size: 2rem; }
+            .content-section { padding: 30px 20px; }
+            .drag-items { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1 class="main-title">🔢 순차 구조 배우기</h1>
+            <p class="subtitle">차례대로 하나씩! 순서의 중요성을 배워보아요</p>
+        </div>
+        
+        <!-- 인터랙티브 체험 -->
+        <div class="content-section">
+            <h2 class="section-title">🎯 직접 해보기</h2>
+            
+            <div class="interactive-section">
+                <h3 style="text-align: center; font-size: 1.8rem; color: #2C3E50; margin-bottom: 20px;">
+                    🧩 올바른 순서로 배열해보세요!
+                </h3>
+                <p style="text-align: center; font-size: 1.3rem; color: #7F8C8D; margin-bottom: 30px;">
+                    아래의 과정들을 드래그해서 올바른 순서로 배치해보세요.
+                </p>
+                
+                <div class="practice-area">
+                    <h4 style="text-align: center; font-size: 1.5rem; margin-bottom: 20px; color: #2C3E50;">
+                        🎂 케이크 만들기 순서
+                    </h4>
+                    
+                    <div class="drag-items" id="dragItems">
+                        <div class="drag-item" draggable="true" data-order="3">오븐에 굽기</div>
+                        <div class="drag-item" draggable="true" data-order="1">재료 섞기</div>
+                        <div class="drag-item" draggable="true" data-order="4">장식하기</div>
+                        <div class="drag-item" draggable="true" data-order="2">반죽 만들기</div>
+                    </div>
+                    
+                    <div class="drop-zones">
+                        <div class="drop-zone" data-position="1">1단계: 여기에 드롭하세요</div>
+                        <div class="drop-zone" data-position="2">2단계: 여기에 드롭하세요</div>
+                        <div class="drop-zone" data-position="3">3단계: 여기에 드롭하세요</div>
+                        <div class="drop-zone" data-position="4">4단계: 여기에 드롭하세요</div>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button class="btn" id="checkOrder">✅ 정답 확인</button>
+                        <button class="btn" id="resetPractice">🔄 다시 하기</button>
+                    </div>
+                    
+                    <div id="result" style="text-align: center; font-size: 1.5rem; font-weight: 600; margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 드래그 앤 드롭 기능
+        let draggedItem = null;
+        const practiceData = {};
+
+        function initializeDragAndDrop() {
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            dragItems.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = item;
+                    item.classList.add('dragging');
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    if (draggedItem && !zone.classList.contains('filled')) {
+                        const position = zone.getAttribute('data-position');
+                        practiceData[position] = {
+                            order: draggedItem.getAttribute('data-order'),
+                            text: draggedItem.textContent
+                        };
+                        
+                        zone.textContent = draggedItem.textContent;
+                        zone.classList.add('filled');
+                        draggedItem.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        function checkPracticeOrder() {
+            const result = document.getElementById('result');
+            let isCorrect = true;
+            
+            for (let i = 1; i <= 4; i++) {
+                if (!practiceData[i] || practiceData[i].order !== i.toString()) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+            
+            if (Object.keys(practiceData).length < 4) {
+                result.innerHTML = "❌ 모든 단계를 배치해주세요!";
+                result.style.color = "#E74C3C";
+            } else if (isCorrect) {
+                result.innerHTML = "🎉 정답입니다! 완벽한 순차 구조예요!";
+                result.style.color = "#27AE60";
+            } else {
+                result.innerHTML = "❌ 순서를 다시 확인해보세요!";
+                result.style.color = "#E74C3C";
+            }
+        }
+
+        function resetPractice() {
+            // 드롭 존 초기화
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('filled');
+                zone.textContent = zone.getAttribute('data-position') + "단계: 여기에 드롭하세요";
+            });
+            
+            // 드래그 아이템 다시 보이기
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.style.display = 'block';
+            });
+            
+            // 데이터 초기화
+            Object.keys(practiceData).forEach(key => delete practiceData[key]);
+            
+            // 결과 메시지 초기화
+            document.getElementById('result').innerHTML = "";
+        }
+        
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('checkOrder').addEventListener('click', checkPracticeOrder);
+            document.getElementById('resetPractice').addEventListener('click', resetPractice);
+            
+            initializeDragAndDrop();
+        });
+    </script>
+</body>
+</html>
 
