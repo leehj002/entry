@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry 신호 실습 - 릴레이 경주</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.2em;
+        }
+
+        .relay-stage {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .relay-stage h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .instructions {
+            background: #e6fffa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #38b2ac;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            color: #234e52;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #285e61;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .runners-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .runner {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.5s ease;
+            border: 3px solid #e2e8f0;
+            position: relative;
+        }
+
+        .runner.waiting {
+            border-color: #cbd5e0;
+        }
+
+        .runner.ready {
+            border-color: #feca57;
+            background: linear-gradient(135deg, #fff3cd, #fef08a);
+            transform: scale(1.02);
+        }
+
+        .runner.running {
+            border-color: #4ecdc4;
+            background: linear-gradient(135deg, #c6f6d5, #a7f3d0);
+            transform: scale(1.05);
+            animation: runningPulse 1s infinite;
+        }
+
+        .runner.finished {
+            border-color: #38a169;
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+        }
+
+        .runner.error {
+            border-color: #e53e3e;
+            background: linear-gradient(135deg, #fed7d7, #fbb6ce);
+            animation: errorShake 0.5s;
+        }
+
+        @keyframes runningPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .runner-emoji {
+            font-size: 3em;
+            margin: 10px 0;
+        }
+
+        .runner-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .runner-status {
+            font-size: 0.9em;
+            color: #4a5568;
+            margin-bottom: 12px;
+        }
+
+        .signal-input {
+            background: #f7fafc;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.9em;
+            width: 100%;
+            margin: 8px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .signal-input:focus {
+            border-color: #667eea;
+            background: white;
+            outline: none;
+        }
+
+        .signal-input.correct {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .signal-input.incorrect {
+            border-color: #e53e3e;
+            background: #fef5f5;
+        }
+
+        .send-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .send-button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+        .control-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .control-panel h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn.reset {
+            background: linear-gradient(45deg, #a0aec0, #718096);
+        }
+
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feedback.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #38a169;
+        }
+
+        .feedback.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+
+        .feedback.info {
+            background: #bee3f8;
+            color: #2a4a5e;
+            border: 2px solid #3182ce;
+        }
+
+
+        @media (max-width: 768px) {
+            .runners-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="relay-stage">
+            <h2>🏁 릴레이 경주장</h2>
+            
+            <div class="instructions">
+                <h3>📋 실습 방법</h3>
+                <p>
+                    1️⃣ 각 선수 아래의 입력창에 올바른 신호를 입력하세요<br>
+                    2️⃣ "신호 보내기" 버튼을 눌러서 신호를 전송하세요<br>
+                    3️⃣ 선수들이 순서대로 달리는 모습을 확인하세요<br>
+                    <br>
+                    <strong>💡 힌트:</strong> 
+                    • 1번 선수: "시작" 신호로 경주를 시작하세요<br>
+                    • 2,3번 선수: "바톤" 신호로 다음 선수에게 전달하세요
+                </p>
+            </div>
+
+            <div class="runners-container">
+                <div class="runner waiting" id="runner1">
+                    <div class="runner-emoji">🏃‍♂️</div>
+                    <div class="runner-name">1번 선수</div>
+                    <div class="runner-status">신호 대기 중...</div>
+                    <input type="text" class="signal-input" id="signal1" placeholder="신호를 입력하세요" maxlength="10">
+                    <button class="send-button" onclick="sendSignal(1)">📤 신호 보내기</button>
+                </div>
+                
+                <div class="runner waiting" id="runner2">
+                    <div class="runner-emoji">🏃‍♀️</div>
+                    <div class="runner-name">2번 선수</div>
+                    <div class="runner-status">1번 선수를 기다리는 중...</div>
+                    <input type="text" class="signal-input" id="signal2" placeholder="신호를 입력하세요" maxlength="10" disabled>
+                    <button class="send-button" onclick="sendSignal(2)" disabled>📤 신호 보내기</button>
+                </div>
+                
+                <div class="runner waiting" id="runner3">
+                    <div class="runner-emoji">🏃‍♂️</div>
+                    <div class="runner-name">3번 선수</div>
+                    <div class="runner-status">2번 선수를 기다리는 중...</div>
+                    <input type="text" class="signal-input" id="signal3" placeholder="신호를 입력하세요" maxlength="10" disabled>
+                    <button class="send-button" onclick="sendSignal(3)" disabled>📤 신호 보내기</button>
+                </div>
+                
+            </div>
+
+        </div>
+
+        <div class="control-panel">
+            <h3>🎮 경주 관리</h3>
+            <div class="control-buttons">
+                <button class="btn reset" onclick="resetRace()">🔄 경주 리셋</button>
+                <button class="btn" onclick="showHint()">💡 힌트 보기</button>
+                <button class="btn" onclick="autoComplete()">🎯 자동 완성 (연습용)</button>
+            </div>
+        </div>
+
+
+        <div class="feedback" id="mainFeedback" style="display: none;"></div>
+    </div>
+
+    <script>
+        let currentRunner = 1;
+        let raceCompleted = false;
+
+        // 올바른 신호들
+        const correctSignals = {
+            1: "시작",
+            2: "바톤",
+            3: "바톤"
+        };
+
+        // 신호 보내기
+        function sendSignal(runner) {
+            const input = document.getElementById(`signal${runner}`);
+            const signal = input.value.trim();
+            
+            if (!signal) {
+                showFeedback('신호를 입력해주세요!', 'error');
+                return;
+            }
+            
+            // 순서 확인
+            if (runner !== currentRunner) {
+                showFeedback(`${currentRunner}번 선수의 차례입니다!`, 'error');
+                return;
+            }
+            
+            
+            // 신호 정확성 확인
+            if (signal === correctSignals[runner]) {
+                // 정확한 신호
+                input.classList.remove('incorrect');
+                input.classList.add('correct');
+                
+                runnerStart(runner, signal);
+                
+                // 달리기 애니메이션 후 다음 선수 활성화
+                setTimeout(() => {
+                    runnerFinish(runner);
+                    
+                    if (runner < 3) {
+                        activateNextRunner(runner + 1);
+                    } else {
+                        completeRace();
+                    }
+                }, 2000);
+                
+            } else {
+                // 틀린 신호
+                input.classList.remove('correct');
+                input.classList.add('incorrect');
+                
+                const runnerElement = document.getElementById(`runner${runner}`);
+                runnerElement.classList.add('error');
+                
+                setTimeout(() => {
+                    runnerElement.classList.remove('error');
+                    input.classList.remove('incorrect');
+                    input.value = '';
+                }, 2000);
+                
+                showFeedback(`올바른 신호는 "${correctSignals[runner]}"입니다!`, 'error');
+            }
+        }
+
+        // 선수 달리기 시작
+        function runnerStart(runner, signal) {
+            const runnerElement = document.getElementById(`runner${runner}`);
+            const statusElement = runnerElement.querySelector('.runner-status');
+            
+            runnerElement.className = 'runner running';
+            statusElement.textContent = `"${signal}" 신호로 달리는 중!`;
+            
+            // 입력 비활성화
+            const input = document.getElementById(`signal${runner}`);
+            const button = runnerElement.querySelector('.send-button');
+            input.disabled = true;
+            button.disabled = true;
+        }
+
+        // 선수 완주
+        function runnerFinish(runner) {
+            const runnerElement = document.getElementById(`runner${runner}`);
+            const statusElement = runnerElement.querySelector('.runner-status');
+            
+            runnerElement.className = 'runner finished';
+            statusElement.textContent = '완주 완료!';
+            
+            currentRunner++;
+        }
+
+        // 다음 선수 활성화
+        function activateNextRunner(runner) {
+            const runnerElement = document.getElementById(`runner${runner}`);
+            const statusElement = runnerElement.querySelector('.runner-status');
+            const input = document.getElementById(`signal${runner}`);
+            const button = runnerElement.querySelector('.send-button');
+            
+            runnerElement.className = 'runner ready';
+            statusElement.textContent = '신호 대기 중... (준비완료!)';
+            
+            input.disabled = false;
+            button.disabled = false;
+            input.focus();
+        }
+
+        // 경주 완료
+        function completeRace() {
+            raceCompleted = true;
+            
+            showFeedback('🎊 완벽한 신호 전달! Entry 블록코딩에서 신호가 어떻게 작동하는지 잘 이해하셨네요!', 'success');
+            
+            // 완료 애니메이션
+            for (let i = 1; i <= 3; i++) {
+                setTimeout(() => {
+                    const runner = document.getElementById(`runner${i}`);
+                    runner.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        runner.style.transform = 'scale(1)';
+                    }, 300);
+                }, i * 200);
+            }
+        }
+
+        // 경주 리셋
+        function resetRace() {
+            currentRunner = 1;
+            raceCompleted = false;
+            
+            // 모든 선수 초기화
+            for (let i = 1; i <= 3; i++) {
+                const runnerElement = document.getElementById(`runner${i}`);
+                const statusElement = runnerElement.querySelector('.runner-status');
+                const input = document.getElementById(`signal${i}`);
+                const button = runnerElement.querySelector('.send-button');
+                
+                runnerElement.className = 'runner waiting';
+                input.value = '';
+                input.disabled = (i > 1);
+                button.disabled = (i > 1);
+                input.classList.remove('correct', 'incorrect');
+                
+                if (i === 1) {
+                    statusElement.textContent = '신호 대기 중...';
+                } else {
+                    statusElement.textContent = `${i-1}번 선수를 기다리는 중...`;
+                }
+            }
+            
+            hideFeedback();
+            
+            // 1번 선수 입력창에 포커스
+            document.getElementById('signal1').focus();
+        }
+
+        // 힌트 보기
+        function showHint() {
+            let hintText = '💡 신호 힌트:\n\n';
+            hintText += '1번 선수: "시작" 신호로 경주를 시작하세요\n';
+            hintText += '2번 선수: "바톤" 신호로 바톤을 전달받으세요\n';
+            hintText += '3번 선수: "바톤" 신호로 바톤을 전달받고 결승선을 통과하세요';
+            
+            alert(hintText);
+        }
+
+        // 자동 완성 (연습용)
+        function autoComplete() {
+            if (raceCompleted) {
+                showFeedback('이미 경주가 완료되었습니다. 리셋 후 다시 시도해보세요!', 'info');
+                return;
+            }
+            
+            const input = document.getElementById(`signal${currentRunner}`);
+            input.value = correctSignals[currentRunner];
+            input.classList.add('correct');
+            
+            showFeedback(`${currentRunner}번 선수의 올바른 신호가 자동 입력되었습니다!`, 'info');
+        }
+
+
+        // 피드백 표시
+        function showFeedback(message, type) {
+            const feedback = document.getElementById('mainFeedback');
+            feedback.textContent = message;
+            feedback.className = `feedback ${type}`;
+            feedback.style.display = 'block';
+            
+            setTimeout(hideFeedback, 4000);
+        }
+
+        function hideFeedback() {
+            const feedback = document.getElementById('mainFeedback');
+            feedback.style.display = 'none';
+        }
+
+        // 엔터 키로 신호 전송
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                if (activeElement.classList.contains('signal-input')) {
+                    const runner = parseInt(activeElement.id.replace('signal', ''));
+                    sendSignal(runner);
+                }
+            }
+        });
+
+        // 초기 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('signal1').focus();
+        });
+    </script>
+</body>
+</html>
