@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 홈 제어하기</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .result-area {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 150px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #38a169;
+        }
+
+        .feedback.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h3 style="color: #234e52; margin-bottom: 15px;">🎯 스마트 홈 제어하기</h3>
+        <p style="color: #285e61; font-size: 1.1em; margin-bottom: 20px;">
+            온도센서 값에 따라 에어컨을 자동으로 제어하는 프로그램을 만들어보세요!<br>
+            <strong>조건:</strong> 온도가 28도 이상이면 에어컨 켜기, 그렇지 않으면 에어컨 끄기
+        </p>
+        
+        <div>
+            <label>현재 온도: </label>
+            <input type="number" id="temperatureInput" value="25" min="0" max="50" style="padding: 10px; border-radius: 5px; border: 2px solid #cbd5e0; margin: 0 10px;">
+            <span>도</span>
+        </div>
+        
+        <button class="btn" onclick="testSmartHome()" style="margin-top: 20px;">🏠 스마트 홈 테스트</button>
+        
+        <div class="result-area" id="smartHomeResult" style="margin-top: 20px;">
+            온도를 입력하고 테스트 버튼을 눌러보세요...
+        </div>
+        
+        <div class="feedback" id="smartHomeFeedback"></div>
+    </div>
+
+    <script>
+        // 스마트 홈 테스트
+        function testSmartHome() {
+            const temperature = parseInt(document.getElementById('temperatureInput').value);
+            const result = document.getElementById('smartHomeResult');
+            const feedback = document.getElementById('smartHomeFeedback');
+            
+            result.innerHTML = `🌡️ 현재 온도: ${temperature}도<br><br>`;
+            
+            setTimeout(() => {
+                result.innerHTML += '🔍 조건 확인 중...<br>';
+                setTimeout(() => {
+                    if (temperature >= 28) {
+                        result.innerHTML += `✅ ${temperature}도 ≥ 28도 (조건: 참)<br>`;
+                        result.innerHTML += '❄️ 에어컨을 켭니다!<br>';
+                        result.innerHTML += '<div style="color: #38a169; font-weight: bold;">🏠 스마트 홈: 에어컨 ON</div>';
+                    } else {
+                        result.innerHTML += `❌ ${temperature}도 < 28도 (조건: 거짓)<br>`;
+                        result.innerHTML += '🔌 에어컨을 끕니다!<br>';
+                        result.innerHTML += '<div style="color: #4299e1; font-weight: bold;">🏠 스마트 홈: 에어컨 OFF</div>';
+                    }
+                    
+                    showFeedback('🎉 스마트 홈 제어 성공! 조건문을 잘 이해하셨네요!', 'success', feedback);
+                }, 1000);
+            }, 500);
+        }
+
+        // 피드백 표시
+        function showFeedback(message, type, element) {
+            element.textContent = message;
+            element.className = `feedback show ${type}`;
+            
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
