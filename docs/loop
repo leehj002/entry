@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블록코딩 직접 만들어보기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .block {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .block.action {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .simulator {
+            background: #f7fafc;
+            border: 2px dashed #cbd5e0;
+            min-height: 200px;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .simulator.active {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .repeat-block-container {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            padding: 15px 15px 5px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+            cursor: move;
+            text-align: center;
+        }
+
+        .repeat-block-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .repeat-content {
+            border: 2px dashed #ff9a9a;
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 100px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .result-area {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 150px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .character {
+            width: 80px;
+            height: 80px;
+            background: #4299e1;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            transition: all 0.5s ease;
+        }
+
+        .character.moving {
+            animation: move 0.5s ease-in-out;
+        }
+
+        @keyframes move {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(30px) scale(1.1); }
+            100% { transform: translateX(0); }
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+
+        .interactive-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .interactive-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h2>🎮 직접 만들어보기</h2>
+        <p style="margin-bottom: 20px;">블록을 드래그해서 시뮬레이터에 넣어보세요!</p>
+        
+        <div class="interactive-demo">
+            <div>
+                <h3 style="margin-bottom: 15px;">📦 블록 팔레트</h3>
+                <div class="repeat-block-container" draggable="true" data-type="repeat-container">
+                    <span>🔄 5번 반복하기</span>
+                    <div class="repeat-content" ondragover="event.preventDefault();" ondrop="dropInsideRepeat(event);">
+                        <p style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.8);">블록을 여기에 놓으세요</p>
+                    </div>
+                </div>
+                <div class="block action" draggable="true" data-type="action">🚀 앞으로 이동</div>
+                <div class="block action" draggable="true" data-type="action">🎨 색깔 바꾸기</div>
+                <div class="block action" draggable="true" data-type="action">📢 "안녕!" 말하기</div>
+            </div>
+            
+            <div>
+                <h3 style="margin-bottom: 15px;">🏗️ 코딩 영역</h3>
+                <div class="simulator" id="codeArea">
+                    <p style="color: #a0aec0;">여기에 블록을 드래그해서 놓으세요!</p>
+                </div>
+                <button class="btn" onclick="runSimulation()">▶️ 실행하기</button>
+                <button class="btn" onclick="clearSimulation()">🗑️ 지우기</button>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div class="character" id="character">🤖</div>
+        </div>
+        
+        <div class="result-area" id="simulationResult">
+            실행 결과가 여기에 나타납니다...
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const draggables = document.querySelectorAll('[draggable="true"]');
+            const dropZone = document.getElementById('codeArea');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', this.outerHTML);
+                    e.dataTransfer.setData('block-type', this.dataset.type);
+                });
+            });
+
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('active');
+            });
+
+            dropZone.addEventListener('dragleave', function(e) {
+                this.classList.remove('active');
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('active');
+                
+                const blockHTML = e.dataTransfer.getData('text/plain');
+                const blockType = e.dataTransfer.getData('block-type');
+                
+                if (this.innerHTML.includes('드래그해서')) {
+                    this.innerHTML = '';
+                }
+                
+                const newBlock = document.createElement('div');
+                newBlock.innerHTML = blockHTML;
+                newBlock.firstElementChild.draggable = true;
+                this.appendChild(newBlock.firstElementChild);
+            });
+        });
+
+        function dropInsideRepeat(event) {
+            event.preventDefault();
+            const blockHTML = event.dataTransfer.getData('text/plain');
+            const blockType = event.dataTransfer.getData('block-type');
+            
+            if (blockType !== 'repeat-container') {
+                const newBlock = document.createElement('div');
+                newBlock.innerHTML = blockHTML;
+                newBlock.firstElementChild.draggable = true;
+                newBlock.firstElementChild.style.margin = '5px 0';
+                event.target.closest('.repeat-content').appendChild(newBlock.firstElementChild);
+                const placeholder = event.target.closest('.repeat-content').querySelector('p');
+                if (placeholder) {
+                    placeholder.remove();
+                }
+            }
+        }
+
+        function runSimulation() {
+            const codeArea = document.getElementById('codeArea');
+            const result = document.getElementById('simulationResult');
+            const character = document.getElementById('character');
+            
+            result.innerHTML = '<div style="color: #38a169;">🚀 시뮬레이션 시작!</div>';
+            
+            const actions = parseBlocks(codeArea);
+            
+            if (actions.length === 0) {
+                showFeedback('시뮬레이션을 실행하려면 먼저 블록을 배치해주세요!', 'error', result);
+                return;
+            }
+
+            executeActions(actions, result, character);
+        }
+
+        function parseBlocks(container) {
+            const actions = [];
+            const blocks = container.children;
+
+            for (const block of blocks) {
+                const text = block.textContent.trim();
+                const type = block.dataset.type;
+
+                if (type === 'repeat-container') {
+                    const count = parseInt(text.match(/\d+/)[0]);
+                    const nestedContainer = block.querySelector('.repeat-content');
+                    const nestedActions = parseBlocks(nestedContainer);
+                    actions.push({ type: 'repeat', count, nestedActions });
+                } else if (type === 'action') {
+                    if (text.includes('이동')) {
+                        actions.push({ type: 'move' });
+                    } else if (text.includes('색깔')) {
+                        actions.push({ type: 'color' });
+                    } else if (text.includes('말하기')) {
+                        actions.push({ type: 'speak' });
+                    }
+                }
+            }
+            return actions;
+        }
+        
+        async function executeActions(actions, resultElement, characterElement, indent = 0) {
+            const colors = ['#4299e1', '#48bb78', '#ed8936', '#9f7aea', '#f56565'];
+            let colorIndex = 0;
+            const indentStyle = `margin-left: ${indent * 20}px;`;
+
+            for (const action of actions) {
+                if (action.type === 'repeat') {
+                    resultElement.innerHTML += `<div style="${indentStyle}">🔄 ${action.count}번 반복 시작...</div>`;
+                    // 변경된 부분: 반복 중 메시지 제거
+                    for (let i = 0; i < action.count; i++) {
+                        await executeActions(action.nestedActions, resultElement, characterElement, indent + 1);
+                    }
+                    resultElement.innerHTML += `<div style="${indentStyle}">✅ ${action.count}번 반복 완료!</div>`;
+                } else if (action.type === 'move') {
+                    characterElement.classList.add('moving');
+                    resultElement.innerHTML += `<div style="${indentStyle}">🚀 앞으로 이동!</div>`;
+                    await new Promise(resolve => setTimeout(() => {
+                        characterElement.classList.remove('moving');
+                        resolve();
+                    }, 500));
+                } else if (action.type === 'color') {
+                    characterElement.style.background = colors[colorIndex % colors.length];
+                    colorIndex++;
+                    resultElement.innerHTML += `<div style="${indentStyle}">🎨 색깔 변경!</div>`;
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                } else if (action.type === 'speak') {
+                    resultElement.innerHTML += `<div style="${indentStyle}">📢 "안녕!"</div>`;
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            }
+        }
+
+        function clearSimulation() {
+            document.getElementById('codeArea').innerHTML = '<p style="color: #a0aec0;">여기에 블록을 드래그해서 놓으세요!</p>';
+            document.getElementById('simulationResult').innerHTML = '실행 결과가 여기에 나타납니다...';
+            document.getElementById('character').style.background = '#4299e1';
+        }
+
+        function showFeedback(message, type, element) {
+            element.textContent = message;
+            element.className = `feedback show ${type}`;
+            
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
