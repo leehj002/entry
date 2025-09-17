@@ -52,6 +52,23 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+        
+        .choice-btn {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #cbd5e0;
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .choice-btn.selected {
+            background: #e2e8f0;
+            border-color: #667eea;
+            color: #2d3748;
+        }
 
         .feedback {
             padding: 15px;
@@ -78,6 +95,19 @@
             color: #742a2a;
             border: 2px solid #e53e3e;
         }
+
+        .center-content {
+            text-align: center;
+        }
+        
+        .practice-container {
+            background: #f7f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -88,44 +118,74 @@
             <strong>조건:</strong> 온도가 28도 이상이면 에어컨 켜기, 그렇지 않으면 에어컨 끄기
         </p>
         
-        <div>
-            <label>현재 온도: </label>
-            <input type="number" id="temperatureInput" value="25" min="0" max="50" style="padding: 10px; border-radius: 5px; border: 2px solid #cbd5e0; margin: 0 10px;">
-            <span>도</span>
+        <div class="practice-container">
+            <div class="center-content">
+                <label>현재 온도: </label>
+                <input type="number" id="temperatureInput" value="25" min="0" max="50" style="padding: 10px; border-radius: 5px; border: 2px solid #cbd5e0; margin: 0 10px;">
+                <span>도</span>
+            </div>
+            
+            <div class="center-content" style="margin: 20px 0;">
+                <p style="font-weight: bold; margin-bottom: 10px;">예상하는 에어컨 동작을 선택하세요:</p>
+                <button class="choice-btn" data-choice="on" onclick="selectChoice(this)">❄️ 켜기</button>
+                <button class="choice-btn" data-choice="off" onclick="selectChoice(this)">🔌 끄기</button>
+            </div>
+            
+            <div class="center-content">
+                <button class="btn" onclick="checkAnswer()" style="margin-top: 20px;">✅ 정답 확인</button>
+            </div>
         </div>
         
-        <button class="btn" onclick="testSmartHome()" style="margin-top: 20px;">🏠 스마트 홈 테스트</button>
-        
         <div class="result-area" id="smartHomeResult" style="margin-top: 20px;">
-            온도를 입력하고 테스트 버튼을 눌러보세요...
+            온도를 입력하고 예상하는 동작을 선택한 뒤 정답 확인 버튼을 눌러보세요...
         </div>
         
         <div class="feedback" id="smartHomeFeedback"></div>
     </div>
 
     <script>
-        // 스마트 홈 테스트
-        function testSmartHome() {
+        let selectedChoice = null;
+
+        function selectChoice(element) {
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedChoice = element.dataset.choice;
+        }
+
+        // 정답 확인
+        function checkAnswer() {
+            if (selectedChoice === null) {
+                showFeedback('먼저 예상하는 동작을 선택해주세요!', 'error', document.getElementById('smartHomeFeedback'));
+                return;
+            }
+
             const temperature = parseInt(document.getElementById('temperatureInput').value);
             const result = document.getElementById('smartHomeResult');
             const feedback = document.getElementById('smartHomeFeedback');
             
             result.innerHTML = `🌡️ 현재 온도: ${temperature}도<br><br>`;
+
+            const correctAction = temperature >= 28 ? 'on' : 'off';
+            const isCorrect = selectedChoice === correctAction;
             
             setTimeout(() => {
-                result.innerHTML += '🔍 조건 확인 중...<br>';
+                result.innerHTML += '🔍 정답 확인 중...<br>';
                 setTimeout(() => {
-                    if (temperature >= 28) {
-                        result.innerHTML += `✅ ${temperature}도 ≥ 28도 (조건: 참)<br>`;
-                        result.innerHTML += '❄️ 에어컨을 켭니다!<br>';
-                        result.innerHTML += '<div style="color: #38a169; font-weight: bold;">🏠 스마트 홈: 에어컨 ON</div>';
+                    if (isCorrect) {
+                        result.innerHTML += '<div style="color: #38a169; font-weight: bold;">✅ 정답입니다!</div>';
+                        showFeedback('🎉 완벽합니다! 조건문을 정확히 이해했어요!', 'success', feedback);
                     } else {
-                        result.innerHTML += `❌ ${temperature}도 < 28도 (조건: 거짓)<br>`;
-                        result.innerHTML += '🔌 에어컨을 끕니다!<br>';
-                        result.innerHTML += '<div style="color: #4299e1; font-weight: bold;">🏠 스마트 홈: 에어컨 OFF</div>';
+                        result.innerHTML += '<div style="color: #e53e3e; font-weight: bold;">❌ 오답입니다!</div>';
+                        if (correctAction === 'on') {
+                            result.innerHTML += `➡️ ${temperature}도는 28도 이상이므로 에어컨이 켜져야 합니다.<br>`;
+                        } else {
+                            result.innerHTML += `➡️ ${temperature}도는 28도 미만이므로 에어컨이 꺼져야 합니다.<br>`;
+                        }
+                        showFeedback('🤔 다시 생각해보세요. 조건에 맞는 행동을 선택해야 합니다.', 'error', feedback);
                     }
                     
-                    showFeedback('🎉 스마트 홈 제어 성공! 조건문을 잘 이해하셨네요!', 'success', feedback);
+                    result.innerHTML += `<br><strong>정답:</strong> ${correctAction === 'on' ? '켜기' : '끄기'}`;
                 }, 1000);
             }, 500);
         }
