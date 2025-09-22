@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>저금통으로 배우는 변수 (블록 코딩 Ver.)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .coin {
+            transition: all 0.5s ease-in-out;
+        }
+        .code-block {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .block-value {
+            background-color: white;
+            color: black;
+            border-radius: 12px;
+            padding: 2px 10px;
+            margin: 0 6px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-4xl mx-auto p-6 md:p-8 bg-white rounded-2xl shadow-lg">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-amber-900">저금통으로 배우는 변수(Variable) 🐷</h1>
+            <p class="mt-2 text-lg text-gray-600">변수는 값을 저장하는 상자(저금통)와 같아요!</p>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <!-- 왼쪽: 시각화 및 인터랙션 -->
+            <div class="bg-amber-100 p-6 rounded-xl text-center relative overflow-hidden">
+                <div id="coin-animation-area" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+                <div class="text-6xl mb-4">🐖</div>
+                <h2 class="text-2xl font-bold text-amber-800">돼지 저금통</h2>
+                <p class="text-gray-700 mt-2 mb-4">
+                    현재 저금통에 들어있는 돈은<br>
+                    <span id="moneyDisplay" class="text-4xl font-bold text-green-600">0</span> 원 입니다.
+                </p>
+                <div class="flex justify-center gap-4 mt-6">
+                    <button id="depositButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                        100원 넣기 (+)
+                    </button>
+                    <button id="withdrawButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105">
+                        100원 빼기 (-)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 코드 설명 -->
+            <div class="bg-gray-800 p-6 rounded-xl text-white font-mono">
+                <h3 class="text-xl font-bold text-yellow-300 mb-4">// 블록 코딩으로 보면 이렇게 보여요!</h3>
+                
+                <!-- 변수 선언 블록 -->
+                <div id="block-line-1" class="p-2 rounded-lg transition-all duration-300">
+                    <div class="code-block bg-orange-500 text-white">
+                        <span>'저금액' 변수를</span>
+                        <span id="codeMoneyValue" class="block-value">0</span>
+                        <span>으로 정하기</span>
+                    </div>
+                    <span class="text-gray-400 ml-2 text-sm">// 변수(저금통) 만들기</span>
+                </div>
+                
+                <!-- 돈 넣기 블록 -->
+                <div id="block-line-2" class="mt-4 p-2 rounded-lg transition-all duration-300">
+                     <div class="code-block bg-orange-500 text-white">
+                        <span>'저금액' 변수를</span>
+                        <span class="block-value">100</span>
+                        <span>만큼 바꾸기</span>
+                    </div>
+                    <span class="text-gray-400 ml-2 text-sm">// 돈 넣기 (+)</span>
+                </div>
+
+                <!-- 돈 빼기 블록 -->
+                <div id="block-line-3" class="mt-4 p-2 rounded-lg transition-all duration-300">
+                    <div class="code-block bg-orange-500 text-white">
+                        <span>'저금액' 변수를</span>
+                        <span class="block-value">-100</span>
+                        <span>만큼 바꾸기</span>
+                    </div>
+                    <span class="text-gray-400 ml-2 text-sm">// 돈 빼기 (-)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let 저금액 = 0;
+
+        const moneyDisplay = document.getElementById('moneyDisplay');
+        const codeMoneyValue = document.getElementById('codeMoneyValue');
+        const depositButton = document.getElementById('depositButton');
+        const withdrawButton = document.getElementById('withdrawButton');
+        const coinAnimationArea = document.getElementById('coin-animation-area');
+        
+        const codeBlocks = [
+            document.getElementById('block-line-1'),
+            document.getElementById('block-line-2'),
+            document.getElementById('block-line-3')
+        ];
+
+        function updateDisplay() {
+            moneyDisplay.textContent = 저금액;
+            codeMoneyValue.textContent = 저금액;
+        }
+        
+        function highlightCode(blockNumber) {
+            codeBlocks.forEach((block, index) => {
+                if (index + 1 === blockNumber) {
+                    block.style.backgroundColor = 'rgba(251, 191, 36, 0.3)';
+                    block.style.transform = 'scale(1.03)';
+                } else {
+                    block.style.backgroundColor = 'transparent';
+                    block.style.transform = 'scale(1)';
+                }
+            });
+        }
+
+        function playCoinAnimation(type) {
+            const coin = document.createElement('div');
+            coin.textContent = '🪙';
+            coin.className = 'coin text-2xl absolute';
+            
+            const startX = Math.random() * 80 + 10;
+            coin.style.left = `${startX}%`;
+
+            if (type === 'deposit') {
+                coin.style.top = '-20px';
+                coin.style.opacity = '1';
+                coinAnimationArea.appendChild(coin);
+                setTimeout(() => {
+                    coin.style.top = '40%';
+                    coin.style.opacity = '0';
+                    coin.style.transform = 'translateY(50px) scale(0.5)';
+                }, 10);
+            } else { // withdraw
+                coin.style.top = '40%';
+                coin.style.opacity = '0';
+                coinAnimationArea.appendChild(coin);
+                setTimeout(() => {
+                    coin.style.top = '100%';
+                    coin.style.opacity = '1';
+                }, 10);
+            }
+
+            setTimeout(() => {
+                coin.remove();
+            }, 600);
+        }
+
+        depositButton.addEventListener('click', () => {
+            저금액 = 저금액 + 100;
+            updateDisplay();
+            highlightCode(2);
+            playCoinAnimation('deposit');
+        });
+
+        withdrawButton.addEventListener('click', () => {
+            if (저금액 >= 100) {
+                저금액 = 저금액 - 100;
+                updateDisplay();
+                highlightCode(3);
+                playCoinAnimation('withdraw');
+            } else {
+                // 커스텀 모달이나 메시지 박스로 대체하는 것이 좋지만, 간단하게 alert 사용
+                const noMoneyMsg = document.createElement('div');
+                noMoneyMsg.textContent = '저금통이 비었어요!';
+                noMoneyMsg.style.cssText = `
+                    position: absolute;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background-color: #f87171;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    opacity: 0;
+                    transition: opacity 0.5s;
+                    z-index: 100;
+                `;
+                document.querySelector('.bg-amber-100').appendChild(noMoneyMsg);
+                setTimeout(() => noMoneyMsg.style.opacity = '1', 10);
+                setTimeout(() => {
+                    noMoneyMsg.style.opacity = '0';
+                    setTimeout(() => noMoneyMsg.remove(), 500);
+                }, 2000);
+            }
+        });
+
+        // 초기 화면 설정
+        updateDisplay();
+        highlightCode(1);
+    </script>
+
+</body>
+</html>
+
