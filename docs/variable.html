@@ -49,7 +49,7 @@
         .game-layout {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .variable-panel {
@@ -233,7 +233,7 @@
             color: #f9fafb;
             padding: 2rem;
             border-radius: 0.75rem;
-            margin: 1rem 0 0 0;
+            margin: 0.5rem 0 0 0;
             font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
             min-height: 120px;
             border: 1px solid #374151;
@@ -387,7 +387,28 @@
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             border-radius: 1rem;
             overflow: hidden;
-            margin-bottom: 1rem;
+        }
+
+        .reset-button {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+            z-index: 10;
+        }
+
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
         }
 
         .speech-bubble {
@@ -617,7 +638,7 @@
 <body>
     <div class="container">
         <div class="variable-game">
-            <div class="instruction-area" style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.8); border-radius: 1rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="instruction-area" style="text-align: center; margin-bottom: 1.5rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.8); border-radius: 1rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
                 <div style="color: #3b82f6; font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem;">
                     🎮 게임 캐릭터의 상태를 변수로 관리해 보세요!
                 </div>
@@ -629,6 +650,7 @@
             <div class="game-layout">
                 <div class="character-area">
                     <div id="character-container">
+                        <button class="reset-button" onclick="resetGame()">🔄 리셋</button>
 
                         <div class="character" id="gameCharacter">
                             <div class="character-body">
@@ -647,9 +669,6 @@
                                 <div class="character-cheeks cheek-right"></div>
                                 <div class="level-badge" id="levelBadge">1</div>
                             </div>
-                        </div>
-                        <div class="health-bar">
-                            <div class="health-fill" id="healthBar" style="width: 100%"></div>
                         </div>
                     </div>
 
@@ -696,12 +715,6 @@
                                 📈 레벨업!
                             </button>
                         </div>
-                    </div>
-                </div>
-
-                <div class="game-controls">
-                    <div class="control-buttons">
-                        <button class="btn btn-secondary" onclick="resetGame()">🔄 게임 리셋</button>
                     </div>
                 </div>
             </div>
