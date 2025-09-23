@@ -5,254 +5,1018 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>변수 조작 게임</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            max-width: 800px;
-            width: 100%;
-            color: #333;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom, #dbeafe, #bbf7d0);
+            min-height: 100vh;
+            padding: 0.5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #4b5563;
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
         .variable-game {
-            background: linear-gradient(135deg, #48bb78, #38a169);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            padding: 2rem;
         }
 
-        .variable-box {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            /* Flexbox를 사용하여 모든 박스의 크기를 동일하게 만듭니다. */
-            flex: 1;
-        }
-
-        .variable-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-        }
-
-        .variable-name {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .variable-value {
-            font-size: 2.5em;
-            background: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px dashed rgba(255,255,255,0.5);
-        }
-
-        .variable-container {
+        .game-layout {
             display: flex;
-            justify-content: space-around;
-            /* 박스 사이의 간격을 줄입니다. */
-            gap: 15px;
-            margin: 20px 0;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .variable-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .variable-group {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .variable-stat {
+            padding: 1.5rem;
+            text-align: center;
+            pointer-events: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .variable-buttons {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .variable-buttons .mini-btn {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #374151;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .variable-buttons .mini-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .variable-buttons .mini-btn.heal {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .variable-buttons .mini-btn.damage {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .variable-buttons .mini-btn.score {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+
+        .variable-buttons .mini-btn.levelup {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: white;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .character-area {
+            position: relative;
         }
 
         .game-controls {
+            margin: 1.5rem 0;
+        }
+
+        .action-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .control-group {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .control-group select {
-            width: 100%;
-            padding: 10px;
+        .action-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 80px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .action-btn.heal {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-btn.heal:hover {
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .action-btn.damage {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .action-btn.damage:hover {
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .action-btn.score {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+        }
+
+        .action-btn.score:hover {
+            box-shadow: 0 12px 30px rgba(251, 191, 36, 0.4);
+        }
+
+        .action-btn.levelup {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .action-btn.levelup:hover {
+            box-shadow: 0 12px 30px rgba(167, 139, 250, 0.4);
+        }
+
+        .action-btn .emoji {
+            font-size: 1.5rem;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 0.5rem;
         }
 
         .result-area {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            min-height: 150px;
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0 0 0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            min-height: 120px;
+            border: 1px solid #374151;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .helper-character {
+            position: absolute;
+            right: 30px;
+            bottom: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #34d399, #10b981);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+            border: 3px solid white;
+            z-index: 5;
+        }
+
+        .helper-face {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .helper-eyes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .helper-eye {
+            width: 6px;
+            height: 8px;
+            background: #1f2937;
+            border-radius: 50%;
+        }
+
+        .helper-mouth {
+            width: 12px;
+            height: 6px;
+            background: #1f2937;
+            border-radius: 0 0 12px 12px;
+            margin-top: 2px;
+        }
+
+        .helper-bubble {
+            position: absolute;
+            right: 100px;
+            bottom: 40px;
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid #34d399;
+            max-width: 200px;
+            color: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.3;
+            z-index: 10;
+        }
+
+        .helper-bubble::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            bottom: 15px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid white;
         }
 
         .btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            margin: 0.5rem;
+            width: 100%;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         @keyframes variableBounce {
-            0%, 20%, 60%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            80% { transform: translateY(-5px); }
+            0%, 20%, 60%, 100% { transform: translateY(0) scale(1); }
+            40% { transform: translateY(-12px) scale(1.05); }
+            80% { transform: translateY(-6px) scale(1.02); }
         }
 
         .animation-bounce {
-            animation: variableBounce 0.6s ease-in-out;
+            animation: variableBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @media (max-width: 768px) {
+            .variable-panel {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .variable-group {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        /* Character styles */
+        #character-container {
+            position: relative;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: 40px;
+            left: 30px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 2px solid #fbbf24;
+            max-width: 260px;
+            text-align: left;
+            z-index: 10;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 40px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+
+        .speech-text {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .character {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            cursor: pointer;
+            transition: filter 0.3s ease;
+        }
+
+        .character-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(251, 191, 36, 0.4);
+            border: 4px solid #fff;
+        }
+
+        .character-face {
+            position: relative;
+            width: 80%;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .character-eyes {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .eye {
+            width: 24px;
+            height: 32px;
+            background: white;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pupil {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #1e293b;
+            border-radius: 50%;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pupil::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+        }
+
+        .character-mouth {
+            width: 32px;
+            height: 20px;
+            background: #dc2626;
+            border-radius: 0 0 32px 32px;
+            position: relative;
+            margin-top: 4px;
+        }
+
+        .character-mouth::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 12px;
+            background: #fca5a5;
+            border-radius: 50%;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .character-cheeks {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(251, 113, 133, 0.3);
+            border-radius: 50%;
+            top: 50%;
+            opacity: 0.7;
+        }
+
+        .cheek-left {
+            left: 5px;
+            transform: translateY(-50%);
+        }
+
+        .cheek-right {
+            right: 5px;
+            transform: translateY(-50%);
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .level-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4);
+            z-index: 3;
+        }
+
+        .health-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .character.low-health .character-body {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            animation: shake 0.5s ease infinite;
+        }
+
+        .character.dead .character-body {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            transform: rotate(180deg);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes levelUp {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.5) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .character.level-up {
+            animation: levelUp 1s ease;
+        }
+
+        .score-popup {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fbbf24;
+            pointer-events: none;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div class="section">
-        <h2 style="text-align: center; color: #2d3748; margin-bottom: 20px;">🎮 변수 조작 게임</h2>
+    <div class="container">
         <div class="variable-game">
-            <h3 style="text-align: center; margin-bottom: 20px;">게임 캐릭터의 상태를 변수로 관리해보세요!</h3>
-            
-            <div class="variable-container">
-                <div class="variable-box" id="healthBox">
-                    <div class="variable-name">🏥 체력</div>
-                    <div class="variable-value" id="healthValue">100</div>
+            <div class="instruction-area" style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.8); border-radius: 1rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+                <div style="color: #3b82f6; font-weight: 700; font-size: 1.25rem; margin-bottom: 0.5rem;">
+                    🎮 게임 캐릭터의 상태를 변수로 관리해 보세요!
                 </div>
-                <div class="variable-box" id="scoreBox">
-                    <div class="variable-name">⭐ 점수</div>
-                    <div class="variable-value" id="scoreValue">0</div>
-                </div>
-                <div class="variable-box" id="levelBox">
-                    <div class="variable-name">🎯 레벨</div>
-                    <div class="variable-value" id="levelValue">1</div>
+                <div style="color: #6b7280; font-size: 1rem;">
+                    각 변수 그룹의 버튼을 클릭하여 캐릭터의 상태를 변경해 보세요
                 </div>
             </div>
-            
-            <div class="game-controls">
-                <div class="control-group">
-                    <label>액션 선택:</label>
-                    <select id="actionSelect">
-                        <option value="heal">💊 체력 회복 (+20)</option>
-                        <option value="damage">💥 데미지 받기 (-15)</option>
-                        <option value="score">🎁 아이템 획득 (+50점)</option>
-                        <option value="levelup">📈 레벨업!</option>
-                    </select>
+
+            <div class="game-layout">
+                <div class="character-area">
+                    <div id="character-container">
+
+                        <div class="character" id="gameCharacter">
+                            <div class="character-body">
+                                <div class="character-face">
+                                    <div class="character-eyes">
+                                        <div class="eye">
+                                            <div class="pupil"></div>
+                                        </div>
+                                        <div class="eye">
+                                            <div class="pupil"></div>
+                                        </div>
+                                    </div>
+                                    <div class="character-mouth"></div>
+                                </div>
+                                <div class="character-cheeks cheek-left"></div>
+                                <div class="character-cheeks cheek-right"></div>
+                                <div class="level-badge" id="levelBadge">1</div>
+                            </div>
+                        </div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="healthBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="control-group" style="text-align: center;">
-                    <button class="btn" onclick="executeAction()">🎯 실행하기</button>
-                    <button class="btn" onclick="resetGame()">🔄 게임 리셋</button>
+
+                <div class="variable-panel">
+                    <div class="variable-group">
+                        <div class="variable-stat" id="healthStat">
+                            <span class="stat-icon">🏥</span>
+                            <div class="stat-value" id="healthValue">100</div>
+                            <div class="stat-label">체력</div>
+                        </div>
+                        <div class="variable-buttons">
+                            <button class="mini-btn heal" onclick="executeSpecificAction('heal')">
+                                💊 체력 회복 (+20)
+                            </button>
+                            <button class="mini-btn damage" onclick="executeSpecificAction('damage')">
+                                💥 데미지 받기 (-15)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="variable-group">
+                        <div class="variable-stat" id="scoreStat">
+                            <span class="stat-icon">⭐</span>
+                            <div class="stat-value" id="scoreValue">0</div>
+                            <div class="stat-label">점수</div>
+                        </div>
+                        <div class="variable-buttons">
+                            <button class="mini-btn score" onclick="executeSpecificAction('score')">
+                                🎁 아이템 획득 (+50점)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="variable-group">
+                        <div class="variable-stat" id="levelStat">
+                            <span class="stat-icon">🎯</span>
+                            <div class="stat-value" id="levelValue">1</div>
+                            <div class="stat-label">레벨</div>
+                        </div>
+                        <div class="variable-buttons">
+                            <button class="mini-btn levelup" onclick="executeSpecificAction('levelup')">
+                                📈 레벨업!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-controls">
+                    <div class="control-buttons">
+                        <button class="btn btn-secondary" onclick="resetGame()">🔄 게임 리셋</button>
+                    </div>
                 </div>
             </div>
-            
+
             <div class="result-area" id="gameResult">
-                액션을 선택하고 실행 버튼을 눌러보세요...
+                버튼을 클릭해서 캐릭터와 상호작용해 보세요!
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
         // 게임 변수
         let health = 100;
         let score = 0;
         let level = 1;
 
-        // 게임 액션 실행
-        function executeAction() {
-            const action = document.getElementById('actionSelect').value;
+        // 캐릭터 요소들
+        const character = document.getElementById('gameCharacter');
+        const characterBody = character.querySelector('.character-body');
+        const healthBar = document.getElementById('healthBar');
+        const levelBadge = document.getElementById('levelBadge');
+        const container = document.getElementById('character-container');
+
+        // 캐릭터 idle 애니메이션
+        gsap.to(characterBody, {
+            scaleX: 1.05,
+            scaleY: 0.95,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        // 눈깜빡임 애니메이션
+        const eyes = character.querySelectorAll('.eye');
+        setInterval(() => {
+            gsap.to(eyes, {
+                scaleY: 0.1,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+            });
+        }, 3000);
+
+        // 파티클 생성 함수
+        function createParticles(x, y, color, count = 10) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = (x - 4) + 'px';
+                particle.style.top = (y - 4) + 'px';
+                particle.style.backgroundColor = color;
+                container.appendChild(particle);
+
+                const angle = (Math.PI * 2 * i) / count;
+                const distance = 50 + Math.random() * 50;
+
+                gsap.to(particle, {
+                    x: Math.cos(angle) * distance,
+                    y: Math.sin(angle) * distance - Math.random() * 30,
+                    opacity: 0,
+                    scale: 0,
+                    duration: 1,
+                    ease: "power2.out",
+                    onComplete: () => particle.remove()
+                });
+            }
+        }
+
+        // 점수 팝업 생성
+        function createScorePopup(points) {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${points}`;
+            popup.style.left = '50%';
+            popup.style.top = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            container.appendChild(popup);
+
+            gsap.to(popup, {
+                y: -50,
+                opacity: 0,
+                duration: 1.5,
+                ease: "power2.out",
+                onComplete: () => popup.remove()
+            });
+        }
+
+        // 캐릭터 상태 업데이트
+        function updateCharacterState() {
+            // 체력바 업데이트 (최대 체력에 따라 퍼센티지 계산)
+            const healthPercentage = Math.min((health / Math.max(100, health)) * 100, 100);
+            healthBar.style.width = healthPercentage + '%';
+
+            // 체력에 따른 캐릭터 색상 변경
+            character.classList.remove('low-health', 'dead');
+
+            if (health === 0) {
+                character.classList.add('dead');
+                gsap.to(characterBody, {
+                    rotation: 180,
+                    y: 50,
+                    duration: 0.5,
+                    ease: "power2.in"
+                });
+            } else if (health < 30 && health > 0) {
+                character.classList.add('low-health');
+            } else {
+                gsap.to(characterBody, {
+                    rotation: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: "elastic.out(1, 0.5)"
+                });
+            }
+
+            // 캐릭터 크기를 체력에 비례하게 (100 이상도 고려)
+            const baseScale = 0.8;
+            const maxScale = 1.5;
+            const scale = Math.min(baseScale + (health / 200), maxScale);
+            gsap.to(character, {
+                scale: scale,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        }
+
+        // 캐릭터 클릭 이벤트
+        character.addEventListener('click', () => {
+            if (health > 0) {
+                gsap.to(characterBody, {
+                    rotation: 360,
+                    duration: 0.5,
+                    ease: "power2.inOut"
+                });
+                createParticles(60, 150, '#fbbf24', 8);
+            }
+        });
+
+        // 특정 액션 실행
+        function executeSpecificAction(action) {
             const result = document.getElementById('gameResult');
-            
-            result.innerHTML = `🎮 ${action} 액션 실행!<br><br>`;
-            
+
+            result.innerHTML = `🎮 ${getActionName(action)} 액션 실행!<br><br>`;
+
             setTimeout(() => {
                 switch(action) {
                     case 'heal':
                         const oldHealth = health;
-                        health = Math.min(100, health + 20);
+                        health += 20; // 무제한 체력 회복
                         result.innerHTML += `💊 체력 회복: ${oldHealth} → ${health}<br>`;
-                        animateVariableChange('healthBox', 'healthValue', health);
+                        animateVariableChange('healthStat', 'healthValue', health);
+
+                        // 회복 애니메이션
+                        gsap.to(characterBody, {
+                            filter: "hue-rotate(120deg) brightness(1.2)",
+                            duration: 0.3,
+                            yoyo: true,
+                            repeat: 1
+                        });
+                        createParticles(70, 140, '#10b981', 15);
                         break;
-                        
+
                     case 'damage':
                         const oldHealth2 = health;
                         health = Math.max(0, health - 15);
                         result.innerHTML += `💥 데미지 받음: ${oldHealth2} → ${health}<br>`;
-                        animateVariableChange('healthBox', 'healthValue', health);
+                        animateVariableChange('healthStat', 'healthValue', health);
+
+                        // 데미지 애니메이션
+                        gsap.timeline()
+                            .to(character, {
+                                x: -10,
+                                duration: 0.1
+                            })
+                            .to(character, {
+                                x: 10,
+                                duration: 0.1
+                            })
+                            .to(character, {
+                                x: 0,
+                                duration: 0.1
+                            });
+
+                        gsap.to(characterBody, {
+                            filter: "hue-rotate(-60deg) brightness(0.8)",
+                            duration: 0.3,
+                            yoyo: true,
+                            repeat: 1
+                        });
+                        createParticles(70, 140, '#ef4444', 10);
                         break;
-                        
+
                     case 'score':
                         const oldScore = score;
                         score += 50;
                         result.innerHTML += `🎁 점수 획득: ${oldScore} → ${score}<br>`;
-                        animateVariableChange('scoreBox', 'scoreValue', score);
+                        animateVariableChange('scoreStat', 'scoreValue', score);
+
+                        // 점수 획득 애니메이션
+                        createScorePopup(50);
+                        gsap.to(character, {
+                            scale: 1.2,
+                            duration: 0.2,
+                            yoyo: true,
+                            repeat: 1,
+                            ease: "elastic.out(1, 0.5)"
+                        });
+                        createParticles(70, 140, '#fbbf24', 20);
                         break;
-                        
+
                     case 'levelup':
                         const oldLevel = level;
                         level += 1;
                         result.innerHTML += `📈 레벨업: ${oldLevel} → ${level}<br>`;
-                        animateVariableChange('levelBox', 'levelValue', level);
+                        animateVariableChange('levelStat', 'levelValue', level);
+
+                        // 레벨업 애니메이션
+                        levelBadge.textContent = level;
+                        character.classList.add('level-up');
+                        setTimeout(() => character.classList.remove('level-up'), 1000);
+
+                        gsap.to(levelBadge, {
+                            scale: 2,
+                            duration: 0.5,
+                            yoyo: true,
+                            repeat: 1,
+                            ease: "elastic.out(1, 0.5)"
+                        });
+
+                        // 레벨업 파티클 폭발
+                        for (let i = 0; i < 3; i++) {
+                            setTimeout(() => {
+                                createParticles(70, 140, '#a78bfa', 15);
+                            }, i * 100);
+                        }
                         break;
                 }
-                
+
+                updateCharacterState();
                 result.innerHTML += '<div style="color: #38a169; margin-top: 15px;">✅ 변수 값이 업데이트되었습니다!</div>';
             }, 500);
+        }
+
+        function getActionName(action) {
+            switch(action) {
+                case 'heal': return '체력 회복';
+                case 'damage': return '데미지';
+                case 'score': return '점수 획득';
+                case 'levelup': return '레벨업';
+                default: return action;
+            }
         }
 
         function resetGame() {
             health = 100;
             score = 0;
             level = 1;
-            
+
             document.getElementById('healthValue').textContent = health;
             document.getElementById('scoreValue').textContent = score;
             document.getElementById('levelValue').textContent = level;
+            levelBadge.textContent = level;
             document.getElementById('gameResult').innerHTML = '🔄 게임이 초기화되었습니다. 액션을 선택해보세요!';
+
+            updateCharacterState();
+
+            // 리셋 애니메이션
+            gsap.to(character, {
+                scale: 1,
+                rotation: 720,
+                duration: 1,
+                ease: "power2.out"
+            });
+            createParticles(60, 150, '#3b82f6', 30);
         }
 
-        function animateVariableChange(boxId, valueId, newValue) {
-            const box = document.getElementById(boxId);
+        function animateVariableChange(statId, valueId, newValue) {
+            const stat = document.getElementById(statId);
             const valueElement = document.getElementById(valueId);
-            
-            box.classList.add('animation-bounce');
+            const group = stat.closest('.variable-group');
+
             valueElement.textContent = newValue;
-            
-            setTimeout(() => {
-                box.classList.remove('animation-bounce');
-            }, 600);
+
+            gsap.to(stat, {
+                scale: 1.15,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "elastic.out(1, 0.5)"
+            });
+
+            // 전체 그룹에 색상 플래시 효과
+            gsap.to(group, {
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                duration: 0.3,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.out"
+            });
+
+            // 그룹 테두리 하이라이트
+            gsap.to(group, {
+                borderColor: 'rgba(59, 130, 246, 0.8)',
+                duration: 0.3,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.out"
+            });
         }
+
+        // 초기 상태 설정
+        updateCharacterState();
     </script>
 </body>
 </html>
