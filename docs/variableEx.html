@@ -43,9 +43,9 @@
 <body style="background: #cfc6ed; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; margin: 0; padding: 2rem; display: flex; align-items: center; justify-content: center;">
 
     <div style="max-width: 1600px; width: 100%; margin: 0 auto; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem;">
-        <header class="text-center mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-amber-900">저금통으로 배우는 변수(Variable) 🐷</h1>
-            <p class="mt-2 text-lg text-gray-600">변수는 값을 저장하는 상자(저금통)와 같아요!</p>
+        <header class="text-center" style="margin-bottom: 0.5rem; padding: 0.5rem;">
+            <h1 style="font-size: 1.5rem; font-weight: 700; color: #2C3E50; text-align: center; margin-bottom: 0;">저금통으로 배우는 변수(Variable) 🐷</h1>
+            <p style="margin-top: 0.5rem; font-size: 12pt; color: #4b5563;">변수는 값을 저장하는 상자(저금통)와 같아요!</p>
         </header>
 
         <div class="grid md:grid-cols-2 gap-8 items-stretch">
@@ -112,7 +112,6 @@
 
         function updateDisplay() {
             moneyDisplay.textContent = 저금액;
-            codeMoneyValue.textContent = 저금액;
         }
 
         function highlightCode(blockNumber) {
