@@ -16,150 +16,212 @@
 
         body {
             font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #E8F5E8 0%, #F0F8FF 50%, #FFF5F5 100%);
+            background: #bfe1fb;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
+            width: 100%;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
+            border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 35px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #AED6F1 0%, #D2B4DE 50%, #F9E79F 100%);
-            padding: 40px;
-            text-align: center;
-            position: relative;
-        }
-
-        .main-title {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #2C3E50;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .subtitle {
+        .title {
             font-size: 1.5rem;
-            font-weight: 500;
-            color: #34495E;
-            margin-bottom: 20px;
-        }
-
-        .content-section {
-            padding: 50px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
             font-weight: 700;
             color: #2C3E50;
             text-align: center;
             margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(45deg, #FFE4E1, #E8F4F8);
-            border-radius: 20px;
         }
 
-        .interactive-section {
-            background: linear-gradient(45deg, #E8F4F8 0%, #F0F8FF 100%);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 40px 0;
-        }
-
-        .practice-area {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .drag-items {
+        .game-container {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-            flex-wrap: wrap;
+            gap: 30px;
+            align-items: flex-start;
+            position: relative;
         }
 
-        .drag-item {
+        .arrow-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .arrow {
+            font-size: 2.5rem;
+            color: #3498DB;
+            animation: slideArrow 3s ease-in-out infinite;
+            text-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        @keyframes slideArrow {
+            0%, 100% {
+                transform: translateX(-10px);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateX(10px);
+                opacity: 1;
+            }
+        }
+
+        .arrow-text {
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #3498DB;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        /* 점선 연결선 */
+        .game-container::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                #3498DB 0px,
+                #3498DB 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            transform: translateX(-50%);
+            opacity: 0.3;
+        }
+
+        .left-panel,
+        .right-panel {
+            flex: 1;
+            border-radius: 16px;
+            padding: 25px;
+            min-height: 0;
+        }
+
+        .left-panel {
             background: linear-gradient(45deg, #FFE4E1, #FFB6C1);
-            padding: 15px 25px;
-            border-radius: 15px;
-            cursor: grab;
+        }
+
+        .right-panel {
+            background: linear-gradient(45deg, #E8F4F8, #F0F8FF);
+        }
+
+        .left-panel h3,
+        .right-panel h3 {
+            font-size: 1.3rem;
+            color: #2C3E50;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .drag-items,
+        .drop-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+        }
+
+        .drag-item,
+        .drop-zone {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
             font-weight: 600;
             color: #2C3E50;
             border: 2px solid #FFFFFF;
             transition: all 0.3s ease;
             user-select: none;
+            font-size: 1rem;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drag-item {
+            cursor: grab;
         }
 
         .drag-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255,182,193,0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
         .drag-item.dragging {
             opacity: 0.5;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .drop-zone {
-            background: linear-gradient(45deg, #F0F8FF, #E8F4F8);
-            border: 3px dashed #AED6F1;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 10px 0;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-style: dashed;
+            border-color: #AED6F1;
             color: #7F8C8D;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
         }
 
         .drop-zone.drag-over {
             border-color: #3498DB;
-            background: linear-gradient(45deg, #AED6F1, #D5E8FF);
-            color: #2C3E50;
+            background: #E3F2FD;
+            transform: scale(1.02);
         }
 
         .drop-zone.filled {
             border-color: #27AE60;
-            background: linear-gradient(45deg, #D5F4E6, #ABEBC6);
+            border-style: solid;
+            background: white;
             color: #2C3E50;
         }
 
         .control-buttons {
             text-align: center;
-            margin: 30px 0;
+            margin-top: 30px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
         }
 
         .btn {
             background: linear-gradient(45deg, #FFB6C1, #FFE4E1);
-            border: 3px solid #FFFFFF;
-            padding: 15px 30px;
+            border: none;
+            padding: 12px 24px;
             border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            margin: 10px;
             transition: all 0.3s ease;
             color: #2C3E50;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
         .btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(255,182,193,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn:disabled {
@@ -168,56 +230,62 @@
             transform: none;
         }
 
+        #result {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
         @media (max-width: 768px) {
-            .main-title { font-size: 2rem; }
-            .section-title { font-size: 2rem; }
-            .content-section { padding: 30px 20px; }
-            .drag-items { flex-direction: column; align-items: center; }
+            .game-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        
-        <!-- 인터랙티브 체험 -->
-        <div class="content-section">
-            
-            <div class="interactive-section">
-                <h3 style="text-align: center; font-size: 1.8rem; color: #2C3E50; margin-bottom: 20px;">
-                    🧩 올바른 순서로 배열해보세요!
-                </h3>
-                <p style="text-align: center; font-size: 1.3rem; color: #7F8C8D; margin-bottom: 30px;">
-                    아래의 과정들을 드래그해서 올바른 순서로 배치해보세요.
-                </p>
-                
-                <div class="practice-area">
-                    <h4 style="text-align: center; font-size: 1.5rem; margin-bottom: 20px; color: #2C3E50;">
-                        🎂 케이크 만들기 순서
-                    </h4>
-                    
-                    <div class="drag-items" id="dragItems">
-                        <div class="drag-item" draggable="true" data-order="3">오븐에 굽기</div>
-                        <div class="drag-item" draggable="true" data-order="1">재료 섞기</div>
-                        <div class="drag-item" draggable="true" data-order="4">장식하기</div>
-                        <div class="drag-item" draggable="true" data-order="2">반죽 만들기</div>
-                    </div>
-                    
-                    <div class="drop-zones">
-                        <div class="drop-zone" data-position="1">1단계: 여기에 드롭하세요</div>
-                        <div class="drop-zone" data-position="2">2단계: 여기에 드롭하세요</div>
-                        <div class="drop-zone" data-position="3">3단계: 여기에 드롭하세요</div>
-                        <div class="drop-zone" data-position="4">4단계: 여기에 드롭하세요</div>
-                    </div>
-                    
-                    <div class="control-buttons">
-                        <button class="btn" id="checkOrder">✅ 정답 확인</button>
-                        <button class="btn" id="resetPractice">🔄 다시 하기</button>
-                    </div>
-                    
-                    <div id="result" style="text-align: center; font-size: 1.5rem; font-weight: 600; margin-top: 20px;"></div>
+        <h1 class="title">🎂 케이크 만드는 과정을 순서대로 배치해 보세요!</h1>
+
+        <div class="game-container">
+            <!-- 왼쪽 패널: 드래그 아이템 -->
+            <div class="left-panel">
+                <h3>🧩 케이크 만들기 과정</h3>
+                <div class="drag-items" id="dragItems">
+                    <div class="drag-item" draggable="true" data-order="3">오븐에 굽기</div>
+                    <div class="drag-item" draggable="true" data-order="1">재료 섞기</div>
+                    <div class="drag-item" draggable="true" data-order="4">장식하기</div>
+                    <div class="drag-item" draggable="true" data-order="2">반죽 만들기</div>
+                </div>
+            </div>
+
+            <!-- 화살표 애니메이션 -->
+            <div class="arrow-container">
+                <div class="arrow">→</div>
+                <div class="arrow-text">드래그</div>
+            </div>
+
+            <!-- 오른쪽 패널: 드롭 존 -->
+            <div class="right-panel">
+                <h3>✨ 순서대로 배치하기</h3>
+                <div class="drop-zones">
+                    <div class="drop-zone" data-position="1">1단계</div>
+                    <div class="drop-zone" data-position="2">2단계</div>
+                    <div class="drop-zone" data-position="3">3단계</div>
+                    <div class="drop-zone" data-position="4">4단계</div>
                 </div>
             </div>
         </div>
+
+        <div class="control-buttons">
+            <button class="btn" id="checkOrder">✅ 정답 확인</button>
+            <button class="btn" id="resetPractice">🔄 다시 하기</button>
+        </div>
+
+        <div id="result"></div>
     </div>
     <script>
         // 드래그 앤 드롭 기능
@@ -280,13 +348,13 @@
             }
             
             if (Object.keys(practiceData).length < 4) {
-                result.innerHTML = "❌ 모든 단계를 배치해주세요!";
+                result.innerHTML = "❌ 모든 단계를 배치해 주세요!";
                 result.style.color = "#E74C3C";
             } else if (isCorrect) {
                 result.innerHTML = "🎉 정답입니다! 완벽한 순차 구조예요!";
                 result.style.color = "#27AE60";
             } else {
-                result.innerHTML = "❌ 순서를 다시 확인해보세요!";
+                result.innerHTML = "❌ 순서를 다시 확인해 보세요!";
                 result.style.color = "#E74C3C";
             }
         }
@@ -295,7 +363,7 @@
             // 드롭 존 초기화
             document.querySelectorAll('.drop-zone').forEach(zone => {
                 zone.classList.remove('filled');
-                zone.textContent = zone.getAttribute('data-position') + "단계: 여기에 드롭하세요";
+                zone.textContent = zone.getAttribute('data-position') + "단계";
             });
             
             // 드래그 아이템 다시 보이기
