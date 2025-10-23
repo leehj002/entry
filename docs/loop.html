@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>블록코딩 직접 만들어보기</title>
+    <title>반복문으로 더 간단하게 표현해 볼까요?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,49 +15,44 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif;
+            background: #b2d9ad;
             min-height: 100vh;
-            color: #333;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
-        .section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            max-width: 800px;
+        .container {
+            max-width: 1600px;
             width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 35px;
         }
 
-        .section h2 {
-            color: #2d3748;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
+        .title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .block {
             display: inline-block;
-            padding: 15px 25px;
-            margin: 10px;
+            padding: 10px 18px;
+            margin: 4px;
             border-radius: 10px;
             font-weight: bold;
             color: white;
-            cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             text-align: center;
-        }
-
-        .block:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            font-size: 0.95rem;
         }
 
         .block.action {
@@ -82,47 +80,33 @@
 
         .repeat-block-container {
             background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-            padding: 15px 15px 5px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 12px 12px 8px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             color: white;
             font-weight: bold;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-width: 200px;
-            cursor: move;
+            gap: 8px;
+            min-width: 180px;
             text-align: center;
-        }
-
-        .repeat-block-container:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            font-size: 0.95rem;
         }
 
         .repeat-content {
             border: 2px dashed #ff9a9a;
-            border-radius: 10px;
-            padding: 10px;
-            min-height: 100px;
+            border-radius: 8px;
+            padding: 8px;
+            min-height: 60px;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
         }
         
-        .result-area {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            min-height: 150px;
-        }
 
         .btn {
             background: linear-gradient(45deg, #667eea, #764ba2);
@@ -143,27 +127,29 @@
         }
 
         .character {
-            width: 80px;
-            height: 80px;
-            background: #4299e1;
-            border-radius: 50%;
-            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
-            color: white;
-            transition: all 0.5s ease;
         }
 
-        .character.moving {
-            animation: move 0.5s ease-in-out;
+        .character img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
         }
 
-        @keyframes move {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(30px) scale(1.1); }
-            100% { transform: translateX(0); }
+        .character.jumping img {
+            animation: jump 0.5s ease-in-out;
+        }
+
+        @keyframes jump {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-50px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
         }
 
         .feedback {
@@ -186,203 +172,276 @@
             border: 2px solid #e53e3e;
         }
 
-        .interactive-demo {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .main-container {
+            display: flex;
             gap: 30px;
-            margin: 20px 0;
+            align-items: stretch;
+            justify-content: space-between;
+            flex: 1;
+            margin-top: 20px;
         }
 
-        @media (max-width: 768px) {
-            .interactive-demo {
-                grid-template-columns: 1fr;
+        .character-section {
+            flex: 1;
+            background: linear-gradient(135deg, #fff9e6, #fff4d9);
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .code-blocks-section {
+            display: flex;
+            gap: 30px;
+            flex: 2;
+        }
+
+        .code-box {
+            flex: 1;
+            background: #f7fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .code-box:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .code-box h3 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .code-display {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .code-info {
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #cbd5e0;
+            color: #2d3748;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .badge-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .movement-track {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2C3E50;
+            min-height: 30px;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: white;
+            border: 3px solid #2C3E50;
+            border-radius: 20px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2C3E50;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid white;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 18px solid #2C3E50;
+        }
+
+        .speech-bubble.hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
             }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .speech-bubble {
+            animation: bounce 3s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="section">
-        <h2>🎮 직접 만들어보기</h2>
-        <p style="margin-bottom: 20px;">블록을 드래그해서 시뮬레이터에 넣어보세요!</p>
-        
-        <div class="interactive-demo">
-            <div>
-                <h3 style="margin-bottom: 15px;">📦 블록 팔레트</h3>
-                <div class="repeat-block-container" draggable="true" data-type="repeat-container">
-                    <span>🔄 5번 반복하기</span>
-                    <div class="repeat-content" ondragover="event.preventDefault();" ondrop="dropInsideRepeat(event);">
-                        <p style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.8);">블록을 여기에 놓으세요</p>
+    <div class="container">
+        <h1 class="title">🔄 같은 동작, 더 짧은 코드!</h1>
+
+        <div class="main-container">
+            <div class="character-section">
+                <div class="speech-bubble" id="speechBubble">
+                    오른쪽 블록 중 하나를 눌러<br>점프하는 모습을 살펴보세요!
+                </div>
+                <div class="character" id="character">
+                    <img src="코들새.png" alt="코들새">
+                </div>
+                <div class="movement-track" id="track"></div>
+            </div>
+
+            <div class="code-blocks-section">
+                <div class="code-box" onclick="runWithoutLoop()">
+                    <h3>① 블록 5개 나열</h3>
+                    <div class="code-display">
+                        <div class="block action">🚀 점프하기</div>
+                        <div class="block action">🚀 점프하기</div>
+                        <div class="block action">🚀 점프하기</div>
+                        <div class="block action">🚀 점프하기</div>
+                        <div class="block action">🚀 점프하기</div>
+                    </div>
+                    <div class="code-info">
+                        <span class="badge badge-success">블록 수: 5개</span>
                     </div>
                 </div>
-                <div class="block action" draggable="true" data-type="action">🚀 앞으로 이동</div>
-                <div class="block action" draggable="true" data-type="action">🎨 색깔 바꾸기</div>
-                <div class="block action" draggable="true" data-type="action">📢 "안녕!" 말하기</div>
-            </div>
-            
-            <div>
-                <h3 style="margin-bottom: 15px;">🏗️ 코딩 영역</h3>
-                <div class="simulator" id="codeArea">
-                    <p style="color: #a0aec0;">여기에 블록을 드래그해서 놓으세요!</p>
+
+                <div class="code-box" onclick="runWithLoop()">
+                    <h3>② 반복문 사용</h3>
+                    <div class="code-display">
+                        <div class="repeat-block-container">
+                            <span>🔄 5번 반복하기</span>
+                            <div class="repeat-content">
+                                <div class="block action">🚀 점프하기</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="code-info">
+                        <span class="badge badge-success">블록 수: 2개</span>
+                    </div>
                 </div>
-                <button class="btn" onclick="runSimulation()">▶️ 실행하기</button>
-                <button class="btn" onclick="clearSimulation()">🗑️ 지우기</button>
             </div>
         </div>
-        
-        <div style="text-align: center; margin: 20px 0;">
-            <div class="character" id="character">🤖</div>
-        </div>
-        
-        <div class="result-area" id="simulationResult">
-            실행 결과가 여기에 나타납니다...
-        </div>
-    </div>
+
+    </div>  <!-- .container end -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const draggables = document.querySelectorAll('[draggable="true"]');
-            const dropZone = document.getElementById('codeArea');
+        let jumpCount = 0;
+        let isRunning = false;
 
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', function(e) {
-                    e.dataTransfer.setData('text/plain', this.outerHTML);
-                    e.dataTransfer.setData('block-type', this.dataset.type);
-                });
-            });
+        async function runWithoutLoop() {
+            if (isRunning) return;
+            isRunning = true;
 
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-            });
-
-            dropZone.addEventListener('dragleave', function(e) {
-                this.classList.remove('active');
-            });
-
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('active');
-                
-                const blockHTML = e.dataTransfer.getData('text/plain');
-                const blockType = e.dataTransfer.getData('block-type');
-                
-                if (this.innerHTML.includes('드래그해서')) {
-                    this.innerHTML = '';
-                }
-                
-                const newBlock = document.createElement('div');
-                newBlock.innerHTML = blockHTML;
-                newBlock.firstElementChild.draggable = true;
-                this.appendChild(newBlock.firstElementChild);
-            });
-        });
-
-        function dropInsideRepeat(event) {
-            event.preventDefault();
-            const blockHTML = event.dataTransfer.getData('text/plain');
-            const blockType = event.dataTransfer.getData('block-type');
-            
-            if (blockType !== 'repeat-container') {
-                const newBlock = document.createElement('div');
-                newBlock.innerHTML = blockHTML;
-                newBlock.firstElementChild.draggable = true;
-                newBlock.firstElementChild.style.margin = '5px 0';
-                event.target.closest('.repeat-content').appendChild(newBlock.firstElementChild);
-                const placeholder = event.target.closest('.repeat-content').querySelector('p');
-                if (placeholder) {
-                    placeholder.remove();
-                }
-            }
-        }
-
-        function runSimulation() {
-            const codeArea = document.getElementById('codeArea');
-            const result = document.getElementById('simulationResult');
+            resetCharacter();
             const character = document.getElementById('character');
-            
-            result.innerHTML = '<div style="color: #38a169;">🚀 시뮬레이션 시작!</div>';
-            
-            const actions = parseBlocks(codeArea);
-            
-            if (actions.length === 0) {
-                showFeedback('시뮬레이션을 실행하려면 먼저 블록을 배치해주세요!', 'error', result);
-                return;
+            const track = document.getElementById('track');
+            const speechBubble = document.getElementById('speechBubble');
+
+            // 말풍선 숨기기
+            speechBubble.classList.add('hidden');
+
+            for (let i = 1; i <= 5; i++) {
+                await jumpCharacter(character);
+                track.textContent = `점프 횟수: ${jumpCount}번`;
+                await sleep(200);
             }
 
-            executeActions(actions, result, character);
+            // 말풍선 다시 보이기
+            speechBubble.classList.remove('hidden');
+            isRunning = false;
         }
 
-        function parseBlocks(container) {
-            const actions = [];
-            const blocks = container.children;
+        async function runWithLoop() {
+            if (isRunning) return;
+            isRunning = true;
 
-            for (const block of blocks) {
-                const text = block.textContent.trim();
-                const type = block.dataset.type;
+            resetCharacter();
+            const character = document.getElementById('character');
+            const track = document.getElementById('track');
+            const speechBubble = document.getElementById('speechBubble');
 
-                if (type === 'repeat-container') {
-                    const count = parseInt(text.match(/\d+/)[0]);
-                    const nestedContainer = block.querySelector('.repeat-content');
-                    const nestedActions = parseBlocks(nestedContainer);
-                    actions.push({ type: 'repeat', count, nestedActions });
-                } else if (type === 'action') {
-                    if (text.includes('이동')) {
-                        actions.push({ type: 'move' });
-                    } else if (text.includes('색깔')) {
-                        actions.push({ type: 'color' });
-                    } else if (text.includes('말하기')) {
-                        actions.push({ type: 'speak' });
-                    }
-                }
+            // 말풍선 숨기기
+            speechBubble.classList.add('hidden');
+
+            for (let i = 1; i <= 5; i++) {
+                await jumpCharacter(character);
+                track.textContent = `점프 횟수: ${jumpCount}번`;
+                await sleep(200);
             }
-            return actions;
-        }
-        
-        async function executeActions(actions, resultElement, characterElement, indent = 0) {
-            const colors = ['#4299e1', '#48bb78', '#ed8936', '#9f7aea', '#f56565'];
-            let colorIndex = 0;
-            const indentStyle = `margin-left: ${indent * 20}px;`;
 
-            for (const action of actions) {
-                if (action.type === 'repeat') {
-                    resultElement.innerHTML += `<div style="${indentStyle}">🔄 ${action.count}번 반복 시작...</div>`;
-                    // 변경된 부분: 반복 중 메시지 제거
-                    for (let i = 0; i < action.count; i++) {
-                        await executeActions(action.nestedActions, resultElement, characterElement, indent + 1);
-                    }
-                    resultElement.innerHTML += `<div style="${indentStyle}">✅ ${action.count}번 반복 완료!</div>`;
-                } else if (action.type === 'move') {
-                    characterElement.classList.add('moving');
-                    resultElement.innerHTML += `<div style="${indentStyle}">🚀 앞으로 이동!</div>`;
-                    await new Promise(resolve => setTimeout(() => {
-                        characterElement.classList.remove('moving');
-                        resolve();
-                    }, 500));
-                } else if (action.type === 'color') {
-                    characterElement.style.background = colors[colorIndex % colors.length];
-                    colorIndex++;
-                    resultElement.innerHTML += `<div style="${indentStyle}">🎨 색깔 변경!</div>`;
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                } else if (action.type === 'speak') {
-                    resultElement.innerHTML += `<div style="${indentStyle}">📢 "안녕!"</div>`;
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                }
-            }
+            // 말풍선 다시 보이기
+            speechBubble.classList.remove('hidden');
+            isRunning = false;
         }
 
-        function clearSimulation() {
-            document.getElementById('codeArea').innerHTML = '<p style="color: #a0aec0;">여기에 블록을 드래그해서 놓으세요!</p>';
-            document.getElementById('simulationResult').innerHTML = '실행 결과가 여기에 나타납니다...';
-            document.getElementById('character').style.background = '#4299e1';
+        async function jumpCharacter(character) {
+            character.classList.add('jumping');
+            jumpCount++;
+            await sleep(500);
+            character.classList.remove('jumping');
         }
 
-        function showFeedback(message, type, element) {
-            element.textContent = message;
-            element.className = `feedback show ${type}`;
-            
-            setTimeout(() => {
-                element.classList.remove('show');
-            }, 4000);
+        function resetCharacter() {
+            jumpCount = 0;
+            const character = document.getElementById('character');
+            const track = document.getElementById('track');
+            character.style.transform = 'translateY(0)';
+            track.textContent = '';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
     </script>
 </body>
