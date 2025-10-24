@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>함수 배우기</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #dcc7b5;
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 2000px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        
+        .result-area {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 150px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .choice-btn {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #cbd5e0;
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .choice-btn.selected {
+            background: #e2e8f0;
+            border-color: #667eea;
+            color: #2d3748;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #38a169;
+        }
+
+        .feedback.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+
+        .center-content {
+            text-align: center;
+        }
+        
+        .practice-container {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-layout {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+
+        .character-panel {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .middle-panel {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f7f9fa;
+            border-left: 5px solid #667eea;
+            padding: 18px;
+            border-radius: 15px;
+        }
+
+        .right-panel {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #1a202c;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .result-section {
+            margin-top: 30px;
+        }
+
+        .result-area {
+            flex: 1;
+            text-align: left;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .character-container {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .character {
+            width: 200px;
+            height: 200px;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .character img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        .character img.flip {
+            transform: scaleX(-1);
+        }
+
+        .speech-bubble {
+            background: white;
+            color: #1f2937;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+            margin-bottom: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 2px solid #667eea;
+            width: 180px;
+            min-height: 50px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(2deg); }
+        }
+
+        @keyframes shiver {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .character.shaking {
+            animation: shake 2s ease infinite;
+        }
+
+        .character.shivering {
+            animation: shiver 1.5s ease infinite;
+        }
+
+        .character.bouncing {
+            animation: bounce 1.2s ease-in-out;
+        }
+
+        .sweat {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: drip 2s ease-in-out infinite;
+        }
+
+        @keyframes drip {
+            0% { top: 10px; opacity: 1; }
+            100% { top: 80px; opacity: 0; }
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 1.2rem;
+            animation: sparkleAnim 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .sparkle {
+            animation-duration: 2s !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h1>🍙 함수로 김밥 싸기</h1>
+        <p class="subtitle">
+            김밥을 만드는 두 가지 방법을 비교해 보세요!<br>
+            직접 만들기 vs 함수로 만들기 - 어떤 방법이 더 편리할까요?
+        </p>
+
+        <div class="content-layout">
+            <!-- 코들새 패널 (왼쪽) -->
+            <div class="character-panel">
+                <!-- 코들새 (처음엔 보임) -->
+                <div id="characterContainer" class="character-container">
+                    <div class="character" id="character">
+                        <img id="characterImage" src="image/그냥 코들새.png" alt="코들새">
+                    </div>
+                    <div class="speech-bubble" id="speechBubble">
+                        두 가지 방법으로<br>김밥을 만들어 보세요!
+                    </div>
+                </div>
+
+                <!-- 비교 표 (처음엔 숨김, 코들새 자리에 표시) -->
+                <div id="comparisonTable" style="display: none;">
+                    <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3 style="text-align: center; color: #667eea; margin-bottom: 15px; font-size: 1.1em;">📊 두 방식 비교</h3>
+                        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                            <thead>
+                                <tr style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+                                    <th style="padding: 12px; text-align: center; font-size: 0.95em;">방식</th>
+                                    <th style="padding: 12px; text-align: center; font-size: 0.95em;">동작 수</th>
+                                    <th style="padding: 12px; text-align: center; font-size: 0.95em;">시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #fff5f5;">
+                                    <td style="padding: 12px; text-align: center; font-weight: bold; color: #ef4444; font-size: 0.95em;">🔧 직접</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 1.05em;" id="tableManualSteps">-</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 1.05em;" id="tableManualDuration">-</td>
+                                </tr>
+                                <tr style="background: #f0fdf4;">
+                                    <td style="padding: 12px; text-align: center; font-weight: bold; color: #10b981; font-size: 0.95em;">⚙️ 함수</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 1.05em;" id="tableFunctionSteps">-</td>
+                                    <td style="padding: 12px; text-align: center; font-size: 1.05em;" id="tableFunctionDuration">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 초기화 버튼 -->
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button class="btn" style="background: #94a3b8; padding: 10px 20px;" onclick="resetAll()">🔄 다시 시작</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 직접 만들기 패널 (중앙) -->
+            <div class="middle-panel" style="background: #fff5f5; border-left: 5px solid #ef4444;">
+                <h3 style="text-align: center; color: #ef4444; margin-bottom: 0;">🔧 직접 만들기</h3>
+                <p style="text-align: center; font-size: 0.9em; color: #666; margin: 0 0 2px 0;">
+                    6개 블록을 순서대로 클릭하세요
+                </p>
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%;">
+                        <button id="btn1" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(1, '재료 준비')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">1️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">재료 준비</div>
+                        </button>
+                        <button id="btn2" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(2, '김 펴기')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">2️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">김 펴기</div>
+                        </button>
+                        <button id="btn3" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(3, '밥 올리기')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">3️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">밥 올리기</div>
+                        </button>
+                        <button id="btn4" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(4, '재료 올리기')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">4️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">재료 올리기</div>
+                        </button>
+                        <button id="btn5" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(5, '말기')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">5️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">말기</div>
+                        </button>
+                        <button id="btn6" style="background: white; border: 3px solid #ef4444; padding: 15px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;"
+                                onclick="manualStep(6, '자르기')"
+                                onmouseover="if(!this.disabled) { this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'; }"
+                                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                            <div style="font-size: 0.85em; color: #ef4444;">6️⃣</div>
+                            <div style="font-size: 1em; font-weight: bold; color: #333;">자르기</div>
+                        </button>
+                    </div>
+                </div>
+                <div id="manualResult" style="text-align: center; font-weight: bold; color: #ef4444; padding: 10px 0;"></div>
+            </div>
+
+            <!-- 함수로 만들기 패널 (오른쪽) -->
+            <div class="middle-panel" style="background: #f0fdf4; border-left: 5px solid #10b981;">
+                <h3 style="text-align: center; color: #10b981; margin-bottom: 0;">⚙️ 함수로 만들기</h3>
+                <p style="text-align: center; font-size: 0.9em; color: #666; margin: 0 0 2px 0;">
+                    함수 카드를 클릭하세요
+                </p>
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1;">
+                    <div onclick="functionCook()" style="background: white; padding: 15px; border-radius: 10px; border: 3px solid #10b981; text-align: center; width: 85%; cursor: pointer; transition: all 0.3s ease;"
+                         onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)';"
+                         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                        <div style="font-size: 1.05em; font-weight: bold; color: #10b981; margin-bottom: 8px;">🚀 김밥_싸기()</div>
+                        <div style="font-size: 0.8em; color: #666; line-height: 1.4;">
+                            ✓ 재료 준비<br>
+                            ✓ 김 펴기<br>
+                            ✓ 밥 올리기<br>
+                            ✓ 재료 올리기<br>
+                            ✓ 말기<br>
+                            ✓ 자르기
+                        </div>
+                    </div>
+                </div>
+                <div id="functionResult" style="text-align: center; font-weight: bold; color: #10b981; padding: 10px 0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let manualCurrentStep = 0;
+        let manualStartTime = null;
+        let manualEndTime = null;
+        let functionStartTime = null;
+        let functionEndTime = null;
+        let manualCompleted = false;
+        let functionCompleted = false;
+        let effectTimers = [];
+
+        // 캐릭터 상태 변경
+        function updateCharacter(state, message) {
+            const character = document.getElementById('character');
+            const characterImage = document.getElementById('characterImage');
+            const speechBubble = document.getElementById('speechBubble');
+
+            // 기존 타이머 모두 클리어
+            effectTimers.forEach(timer => clearTimeout(timer));
+            effectTimers = [];
+
+            // 기존 클래스 및 효과 제거
+            character.classList.remove('shaking', 'bouncing', 'shivering');
+            document.querySelectorAll('.sweat, .sparkle').forEach(el => el.remove());
+
+            switch(state) {
+                case 'tired':
+                    characterImage.src = 'image/더운 코들새.png';
+                    character.classList.add('shaking');
+                    speechBubble.innerHTML = message || '힘들어요... 😩';
+                    speechBubble.style.borderColor = '#ef4444';
+                    // 땀방울 추가
+                    for (let i = 0; i < 3; i++) {
+                        const timer = setTimeout(() => {
+                            const sweat = document.createElement('div');
+                            sweat.className = 'sweat';
+                            sweat.textContent = '💧';
+                            sweat.style.position = 'absolute';
+                            sweat.style.left = (Math.random() * 60 + 20) + 'px';
+                            character.appendChild(sweat);
+                            const removeTimer = setTimeout(() => sweat.remove(), 2000);
+                            effectTimers.push(removeTimer);
+                        }, i * 300);
+                        effectTimers.push(timer);
+                    }
+                    break;
+
+                case 'happy':
+                    characterImage.src = 'image/신난 코들새.png';
+                    character.classList.add('bouncing');
+                    speechBubble.innerHTML = message || '빠르고 완벽해요! 😎';
+                    speechBubble.style.borderColor = '#10b981';
+                    // 반짝이 효과
+                    for (let i = 0; i < 4; i++) {
+                        const sparkle = document.createElement('div');
+                        sparkle.className = 'sparkle';
+                        sparkle.textContent = '✨';
+                        sparkle.style.position = 'absolute';
+                        sparkle.style.left = (i * 30) + 'px';
+                        sparkle.style.top = (Math.random() * 60 + 20) + 'px';
+                        sparkle.style.animationDelay = (i * 0.2) + 's';
+                        character.appendChild(sparkle);
+                    }
+                    break;
+
+                default:
+                    characterImage.src = 'image/그냥 코들새.png';
+                    speechBubble.innerHTML = message || '두 가지 방법으로<br>김밥을 만들어 보세요!';
+                    speechBubble.style.borderColor = '#667eea';
+                    break;
+            }
+        }
+
+        // 직접 만들기 - 각 단계 실행
+        let isProcessing = false;
+
+        function manualStep(step, stepName) {
+            // 이미 처리 중이면 무시
+            if (isProcessing) return;
+
+            // 첫 번째 단계일 때 타이머 시작 및 모든 버튼 초기화
+            if (step === 1) {
+                manualCurrentStep = 0;
+                manualStartTime = Date.now();
+                updateCharacter('normal', '직접 만들기를 시작합니다!<br>한 단계씩 클릭해 주세요.');
+
+                // 모든 버튼 초기화
+                for (let i = 1; i <= 6; i++) {
+                    const btn = document.getElementById('btn' + i);
+                    btn.disabled = false;
+                    btn.style.background = 'white';
+                    btn.style.borderColor = '#ef4444';
+                    btn.style.cursor = 'pointer';
+                    btn.style.opacity = '1';
+                }
+            }
+
+            // 순서대로 클릭했는지 확인
+            if (step !== manualCurrentStep + 1) {
+                updateCharacter('normal', '순서대로 클릭해 주세요!<br>1번부터 차례로 진행해야 합니다.');
+                return;
+            }
+
+            isProcessing = true;
+            manualCurrentStep = step;
+
+            // 클릭된 버튼을 회색으로 변경하고 비활성화
+            const clickedBtn = document.getElementById('btn' + step);
+            clickedBtn.disabled = true;
+            clickedBtn.style.background = '#e5e7eb';
+            clickedBtn.style.borderColor = '#9ca3af';
+            clickedBtn.style.cursor = 'default';
+            clickedBtn.style.opacity = '0.6';
+
+            // 진행 중 반응
+            if (step < 6) {
+                updateCharacter('normal', `${step}단계: ${stepName} 완료!<br>다음 단계를 진행하세요.`);
+            }
+
+            // 각 단계마다 400ms 대기
+            setTimeout(() => {
+                // 마지막 단계 완료
+                if (step === 6) {
+                    manualEndTime = Date.now();
+                    manualCompleted = true;
+                    const duration = ((manualEndTime - manualStartTime) / 1000).toFixed(1);
+                    document.getElementById('manualResult').innerHTML = `소요 시간: <strong>${duration}초</strong>`;
+
+                    updateCharacter('normal', `6단계: ${stepName} 완료<br>김밥이 완성되었습니다!`);
+
+                    // 비교 표 업데이트 및 표시 확인
+                    checkAndShowComparison();
+                }
+                isProcessing = false;
+            }, 400);
+        }
+
+        // 함수로 만들기
+        function functionCook() {
+            if (functionCompleted) {
+                updateCharacter('happy', '이미 김밥_싸기() 함수를 실행했습니다.');
+                return;
+            }
+
+            functionStartTime = Date.now();
+            updateCharacter('happy', '김밥_싸기() 함수 실행 중...<br>6개 단계를 순서대로 진행합니다!');
+
+            const steps = [
+                '재료 준비',
+                '김 펴기',
+                '밥 올리기',
+                '재료 올리기',
+                '말기',
+                '자르기'
+            ];
+
+            let currentStep = 0;
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    updateCharacter('happy', `실행 중: ${steps[currentStep]}... ✓`);
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    functionEndTime = Date.now();
+                    functionCompleted = true;
+                    const duration = ((functionEndTime - functionStartTime) / 1000).toFixed(1);
+                    document.getElementById('functionResult').innerHTML = `소요 시간: <strong>${duration}초</strong>`;
+
+                    updateCharacter('happy', '김밥_싸기() 함수 실행 완료!<br>저장된 6단계 명령이 순서대로 실행되었어요.');
+
+                    // 비교 표 업데이트 및 표시 확인
+                    checkAndShowComparison();
+                }
+            }, 400);
+        }
+
+        // 두 가지 방법을 모두 완료했는지 확인하고 비교 표 보여주기
+        function checkAndShowComparison() {
+            if (manualCompleted && functionCompleted) {
+                const manualDuration = ((manualEndTime - manualStartTime) / 1000).toFixed(1);
+                const functionDuration = ((functionEndTime - functionStartTime) / 1000).toFixed(1);
+
+                // 비교 표 데이터 채우기
+                document.getElementById('tableManualSteps').innerHTML = '<strong>6블록</strong>';
+                document.getElementById('tableManualDuration').innerHTML = `<strong>${manualDuration}초</strong>`;
+                document.getElementById('tableFunctionSteps').innerHTML = '<strong>1블록</strong>';
+                document.getElementById('tableFunctionDuration').innerHTML = `<strong>${functionDuration}초</strong>`;
+
+                // 코들새 숨기고 비교 표 표시
+                document.getElementById('characterContainer').style.display = 'none';
+                document.getElementById('comparisonTable').style.display = 'block';
+            }
+        }
+
+        // 전체 초기화 (다시 시작)
+        function resetAll() {
+            // 모든 상태 초기화
+            manualCurrentStep = 0;
+            manualStartTime = null;
+            manualEndTime = null;
+            manualCompleted = false;
+            functionCompleted = false;
+            functionStartTime = null;
+            functionEndTime = null;
+            isProcessing = false;
+
+            // UI 초기화
+            document.getElementById('manualResult').innerHTML = '';
+            document.getElementById('functionResult').innerHTML = '';
+
+            // 모든 버튼 초기화
+            for (let i = 1; i <= 6; i++) {
+                const btn = document.getElementById('btn' + i);
+                btn.disabled = false;
+                btn.style.background = 'white';
+                btn.style.borderColor = '#ef4444';
+                btn.style.cursor = 'pointer';
+                btn.style.opacity = '1';
+            }
+
+            // 비교 표 숨기고 코들새 다시 표시
+            document.getElementById('comparisonTable').style.display = 'none';
+            document.getElementById('characterContainer').style.display = 'flex';
+
+            // 코들새 초기 상태로
+            updateCharacter('normal', '두 가지 방법으로<br>김밥을 만들어 보세요!');
+        }
+
+    </script>
+</body>
+</html>
