@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #b8dffa;
             min-height: 100vh;
             color: #333;
         }
@@ -95,6 +95,11 @@
             transition: all 0.5s ease;
             border: 3px solid #e2e8f0;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 220px;
         }
 
         .runner.waiting {
@@ -138,20 +143,32 @@
 
         .runner-emoji {
             font-size: 3em;
-            margin: 10px 0;
+            margin: 10px 0 20px 0;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .runner-name {
             font-size: 1.1em;
             font-weight: bold;
             color: #2d3748;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .runner-status {
             font-size: 0.9em;
             color: #4a5568;
             margin-bottom: 12px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .signal-input {
@@ -209,10 +226,8 @@
 
 
         .control-panel {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            margin: 30px 0;
+            padding: 0;
+            margin: 30px 0 10px 0;
             text-align: center;
         }
 
@@ -278,12 +293,26 @@
         }
 
 
+        .signal-animation {
+            position: fixed;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 2px solid #667eea;
+            box-shadow: 0 3px 15px rgba(102, 126, 234, 0.4);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .runners-container {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
-            
+
             .control-buttons {
                 flex-direction: column;
                 align-items: center;
@@ -300,52 +329,40 @@
             <div class="instructions">
                 <h3>📋 실습 방법</h3>
                 <p>
-                    1️⃣ 각 선수 아래의 입력창에 올바른 신호를 입력하세요<br>
-                    2️⃣ "신호 보내기" 버튼을 눌러서 신호를 전송하세요<br>
-                    3️⃣ 선수들이 순서대로 달리는 모습을 확인하세요<br>
-                    <br>
-                    <strong>💡 힌트:</strong> 
-                    • 1번 선수: "시작" 신호로 경주를 시작하세요<br>
-                    • 2,3번 선수: "바톤" 신호로 다음 선수에게 전달하세요
+                    1️⃣ [경주 시작!] 버튼을 눌러 첫 번째 선수에게 '출발' 신호를 보냅니다<br>
+                    2️⃣ 선수들이 서로 신호를 주고받으며 차례대로 달리는지 확인합니다<br>
+                    <span style="font-size: 0.85em; color: #666;">💡 1번 선수는 '2번 출발' 신호를, 2번 선수는 '3번 출발' 신호를 보냅니다</span>
                 </p>
             </div>
 
             <div class="runners-container">
                 <div class="runner waiting" id="runner1">
-                    <div class="runner-emoji">🏃‍♂️</div>
+                    <div class="runner-emoji"><img src="image/코들 캐릭터-01.png" alt="1번 선수" style="width: 80px; height: auto;"></div>
                     <div class="runner-name">1번 선수</div>
-                    <div class="runner-status">신호 대기 중...</div>
-                    <input type="text" class="signal-input" id="signal1" placeholder="신호를 입력하세요" maxlength="10">
-                    <button class="send-button" onclick="sendSignal(1)">📤 신호 보내기</button>
+                    <div class="runner-status">'출발' 신호 대기 중...</div>
                 </div>
-                
+
                 <div class="runner waiting" id="runner2">
-                    <div class="runner-emoji">🏃‍♀️</div>
+                    <div class="runner-emoji"><img src="image/코들 캐릭터-07.png" alt="2번 선수" style="width: 80px; height: auto;"></div>
                     <div class="runner-name">2번 선수</div>
                     <div class="runner-status">1번 선수를 기다리는 중...</div>
-                    <input type="text" class="signal-input" id="signal2" placeholder="신호를 입력하세요" maxlength="10" disabled>
-                    <button class="send-button" onclick="sendSignal(2)" disabled>📤 신호 보내기</button>
                 </div>
-                
+
                 <div class="runner waiting" id="runner3">
-                    <div class="runner-emoji">🏃‍♂️</div>
+                    <div class="runner-emoji"><img src="image/코들 캐릭터-23.png" alt="3번 선수" style="width: 80px; height: auto;"></div>
                     <div class="runner-name">3번 선수</div>
                     <div class="runner-status">2번 선수를 기다리는 중...</div>
-                    <input type="text" class="signal-input" id="signal3" placeholder="신호를 입력하세요" maxlength="10" disabled>
-                    <button class="send-button" onclick="sendSignal(3)" disabled>📤 신호 보내기</button>
                 </div>
-                
+
             </div>
 
-        </div>
-
-        <div class="control-panel">
-            <h3>🎮 경주 관리</h3>
-            <div class="control-buttons">
-                <button class="btn reset" onclick="resetRace()">🔄 경주 리셋</button>
-                <button class="btn" onclick="showHint()">💡 힌트 보기</button>
-                <button class="btn" onclick="autoComplete()">🎯 자동 완성 (연습용)</button>
+            <div class="control-panel">
+                <div class="control-buttons">
+                    <button class="btn" onclick="startRace()">🏁 경주 시작!</button>
+                    <button class="btn reset" onclick="resetRace()">🔄 경주 리셋</button>
+                </div>
             </div>
+
         </div>
 
 
@@ -353,117 +370,185 @@
     </div>
 
     <script>
-        let currentRunner = 1;
         let raceCompleted = false;
+        let raceStarted = false;
 
-        // 올바른 신호들
-        const correctSignals = {
-            1: "시작",
-            2: "바톤",
-            3: "바톤"
-        };
-
-        // 신호 보내기
-        function sendSignal(runner) {
-            const input = document.getElementById(`signal${runner}`);
-            const signal = input.value.trim();
-            
-            if (!signal) {
-                showFeedback('신호를 입력해주세요!', 'error');
+        // 경주 시작 - '출발' 신호 보내기
+        function startRace() {
+            if (raceStarted) {
                 return;
             }
-            
-            // 순서 확인
-            if (runner !== currentRunner) {
-                showFeedback(`${currentRunner}번 선수의 차례입니다!`, 'error');
-                return;
-            }
-            
-            
-            // 신호 정확성 확인
-            if (signal === correctSignals[runner]) {
-                // 정확한 신호
-                input.classList.remove('incorrect');
-                input.classList.add('correct');
-                
-                runnerStart(runner, signal);
-                
-                // 달리기 애니메이션 후 다음 선수 활성화
+
+            raceStarted = true;
+
+            // 시작 버튼에서 1번 선수로 신호 애니메이션
+            showStartSignalAnimation('출발');
+
+            // 1번 선수에게 '출발' 신호 전달
+            setTimeout(() => {
+                receiveSignal(1, '출발');
+            }, 800);
+        }
+
+        // 시작 신호 애니메이션
+        function showStartSignalAnimation(signal) {
+            const startButton = document.querySelector('.btn:not(.reset)');
+            const toElement = document.getElementById('runner1');
+
+            const fromRect = startButton.getBoundingClientRect();
+            const toRect = toElement.getBoundingClientRect();
+
+            // 신호 요소 생성
+            const signalElement = document.createElement('div');
+            signalElement.className = 'signal-animation';
+            signalElement.textContent = `📨 ${signal}`;
+
+            const startX = fromRect.left + fromRect.width / 2 - 50;
+            const startY = fromRect.top + fromRect.height / 2 - 20;
+            const endX = toRect.left + toRect.width / 2 - 50;
+            const endY = toRect.top + toRect.height / 2 - 20;
+
+            signalElement.style.left = `${startX}px`;
+            signalElement.style.top = `${startY}px`;
+
+            document.body.appendChild(signalElement);
+
+            // 포물선 애니메이션
+            animateParabola(signalElement, startX, startY, endX, endY, 600);
+        }
+
+        // 신호를 받은 선수가 반응
+        function receiveSignal(runner, signal) {
+            const runnerElement = document.getElementById(`runner${runner}`);
+            const statusElement = runnerElement.querySelector('.runner-status');
+
+            // 신호를 받았다는 표시
+            runnerElement.className = 'runner ready';
+            statusElement.textContent = `"${signal}" 신호를 받았습니다!`;
+
+            // 잠시 후 달리기 시작
+            setTimeout(() => {
+                runnerStart(runner);
+
+                // 달리기 완료 후 다음 신호 전송
                 setTimeout(() => {
                     runnerFinish(runner);
-                    
-                    if (runner < 3) {
-                        activateNextRunner(runner + 1);
+
+                    // 다음 선수에게 신호 보내기
+                    if (runner === 1) {
+                        sendSignalToNext(runner, '2번 출발');
+                    } else if (runner === 2) {
+                        sendSignalToNext(runner, '3번 출발');
                     } else {
                         completeRace();
                     }
-                }, 2000);
-                
-            } else {
-                // 틀린 신호
-                input.classList.remove('correct');
-                input.classList.add('incorrect');
-                
-                const runnerElement = document.getElementById(`runner${runner}`);
-                runnerElement.classList.add('error');
-                
-                setTimeout(() => {
-                    runnerElement.classList.remove('error');
-                    input.classList.remove('incorrect');
-                    input.value = '';
-                }, 2000);
-                
-                showFeedback(`올바른 신호는 "${correctSignals[runner]}"입니다!`, 'error');
-            }
+                }, 2000); // 2초 동안 달리기
+            }, 800); // 0.8초 대기
         }
 
         // 선수 달리기 시작
-        function runnerStart(runner, signal) {
+        function runnerStart(runner) {
             const runnerElement = document.getElementById(`runner${runner}`);
             const statusElement = runnerElement.querySelector('.runner-status');
-            
+
             runnerElement.className = 'runner running';
-            statusElement.textContent = `"${signal}" 신호로 달리는 중!`;
-            
-            // 입력 비활성화
-            const input = document.getElementById(`signal${runner}`);
-            const button = runnerElement.querySelector('.send-button');
-            input.disabled = true;
-            button.disabled = true;
+            statusElement.textContent = '달리는 중!';
         }
 
         // 선수 완주
         function runnerFinish(runner) {
             const runnerElement = document.getElementById(`runner${runner}`);
             const statusElement = runnerElement.querySelector('.runner-status');
-            
+
             runnerElement.className = 'runner finished';
             statusElement.textContent = '완주 완료!';
-            
-            currentRunner++;
         }
 
-        // 다음 선수 활성화
-        function activateNextRunner(runner) {
-            const runnerElement = document.getElementById(`runner${runner}`);
-            const statusElement = runnerElement.querySelector('.runner-status');
-            const input = document.getElementById(`signal${runner}`);
-            const button = runnerElement.querySelector('.send-button');
-            
-            runnerElement.className = 'runner ready';
-            statusElement.textContent = '신호 대기 중... (준비완료!)';
-            
-            input.disabled = false;
-            button.disabled = false;
-            input.focus();
+        // 다음 선수에게 신호 보내기
+        function sendSignalToNext(currentRunner, signal) {
+            const nextRunner = currentRunner + 1;
+
+            // 신호 애니메이션 표시
+            showSignalAnimation(currentRunner, nextRunner, signal);
+
+            // 다음 선수에게 신호 전달
+            setTimeout(() => {
+                receiveSignal(nextRunner, signal);
+            }, 800);
+        }
+
+        // 신호가 날아가는 애니메이션
+        function showSignalAnimation(fromRunner, toRunner, signal) {
+            const fromElement = document.getElementById(`runner${fromRunner}`);
+            const toElement = document.getElementById(`runner${toRunner}`);
+
+            const fromRect = fromElement.getBoundingClientRect();
+            const toRect = toElement.getBoundingClientRect();
+
+            // 신호 요소 생성
+            const signalElement = document.createElement('div');
+            signalElement.className = 'signal-animation';
+            signalElement.textContent = `📨 ${signal}`;
+
+            const startX = fromRect.left + fromRect.width / 2 - 50;
+            const startY = fromRect.top + fromRect.height / 2 - 20;
+            const endX = toRect.left + toRect.width / 2 - 50;
+            const endY = toRect.top + toRect.height / 2 - 20;
+
+            signalElement.style.left = `${startX}px`;
+            signalElement.style.top = `${startY}px`;
+
+            document.body.appendChild(signalElement);
+
+            // 포물선 애니메이션
+            animateParabola(signalElement, startX, startY, endX, endY, 600);
+        }
+
+        // 포물선 애니메이션 함수
+        function animateParabola(element, startX, startY, endX, endY, duration) {
+            const startTime = performance.now();
+            const height = -80; // 포물선 높이 (음수 = 위로)
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // 이징 함수 (ease-in-out)
+                const easeProgress = progress < 0.5
+                    ? 2 * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+                // x 좌표 (선형)
+                const x = startX + (endX - startX) * easeProgress;
+
+                // y 좌표 (포물선)
+                const y = startY + (endY - startY) * easeProgress +
+                         height * Math.sin(progress * Math.PI);
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // 애니메이션 완료 후 페이드아웃
+                    element.style.transition = 'opacity 0.3s';
+                    element.style.opacity = '0';
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            document.body.removeChild(element);
+                        }
+                    }, 300);
+                }
+            }
+
+            requestAnimationFrame(animate);
         }
 
         // 경주 완료
         function completeRace() {
             raceCompleted = true;
-            
-            showFeedback('🎊 완벽한 신호 전달! Entry 블록코딩에서 신호가 어떻게 작동하는지 잘 이해하셨네요!', 'success');
-            
+
             // 완료 애니메이션
             for (let i = 1; i <= 3; i++) {
                 setTimeout(() => {
@@ -478,59 +563,37 @@
 
         // 경주 리셋
         function resetRace() {
-            currentRunner = 1;
             raceCompleted = false;
-            
+            raceStarted = false;
+
             // 모든 선수 초기화
             for (let i = 1; i <= 3; i++) {
                 const runnerElement = document.getElementById(`runner${i}`);
                 const statusElement = runnerElement.querySelector('.runner-status');
-                const input = document.getElementById(`signal${i}`);
-                const button = runnerElement.querySelector('.send-button');
-                
+
                 runnerElement.className = 'runner waiting';
-                input.value = '';
-                input.disabled = (i > 1);
-                button.disabled = (i > 1);
-                input.classList.remove('correct', 'incorrect');
-                
+                runnerElement.style.transform = 'scale(1)';
+
                 if (i === 1) {
-                    statusElement.textContent = '신호 대기 중...';
+                    statusElement.textContent = "'출발' 신호 대기 중...";
                 } else {
                     statusElement.textContent = `${i-1}번 선수를 기다리는 중...`;
                 }
             }
-            
-            hideFeedback();
-            
-            // 1번 선수 입력창에 포커스
-            document.getElementById('signal1').focus();
         }
 
         // 힌트 보기
         function showHint() {
-            let hintText = '💡 신호 힌트:\n\n';
-            hintText += '1번 선수: "시작" 신호로 경주를 시작하세요\n';
-            hintText += '2번 선수: "바톤" 신호로 바톤을 전달받으세요\n';
-            hintText += '3번 선수: "바톤" 신호로 바톤을 전달받고 결승선을 통과하세요';
-            
+            let hintText = '💡 신호의 흐름:\n\n';
+            hintText += '👤 사용자: "출발" 신호 → 1번 선수\n';
+            hintText += '🏃 1번 선수: 달리기 완료 → "2번 출발" 신호 → 2번 선수\n';
+            hintText += '🏃 2번 선수: 달리기 완료 → "3번 출발" 신호 → 3번 선수\n';
+            hintText += '🏃 3번 선수: 달리기 완료 → 완주!\n\n';
+            hintText += '✨ 이것이 바로 Entry의 "신호" 기능입니다!\n';
+            hintText += '객체들이 서로 신호를 주고받으며 협력합니다.';
+
             alert(hintText);
         }
-
-        // 자동 완성 (연습용)
-        function autoComplete() {
-            if (raceCompleted) {
-                showFeedback('이미 경주가 완료되었습니다. 리셋 후 다시 시도해보세요!', 'info');
-                return;
-            }
-            
-            const input = document.getElementById(`signal${currentRunner}`);
-            input.value = correctSignals[currentRunner];
-            input.classList.add('correct');
-            
-            showFeedback(`${currentRunner}번 선수의 올바른 신호가 자동 입력되었습니다!`, 'info');
-        }
-
 
         // 피드백 표시
         function showFeedback(message, type) {
@@ -538,7 +601,7 @@
             feedback.textContent = message;
             feedback.className = `feedback ${type}`;
             feedback.style.display = 'block';
-            
+
             setTimeout(hideFeedback, 4000);
         }
 
@@ -546,22 +609,6 @@
             const feedback = document.getElementById('mainFeedback');
             feedback.style.display = 'none';
         }
-
-        // 엔터 키로 신호 전송
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const activeElement = document.activeElement;
-                if (activeElement.classList.contains('signal-input')) {
-                    const runner = parseInt(activeElement.id.replace('signal', ''));
-                    sendSignal(runner);
-                }
-            }
-        });
-
-        // 초기 설정
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('signal1').focus();
-        });
     </script>
 </body>
 </html>
