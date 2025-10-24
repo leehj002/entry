@@ -307,7 +307,7 @@
             <div class="character-panel">
                 <div class="character-container">
                     <div class="character" id="character">
-                        <img id="characterImage" src="../그냥 코들새.png" alt="코들새">
+                        <img id="characterImage" src="image/그냥 코들새.png" alt="코들새">
                     </div>
                     <div class="speech-bubble" id="speechBubble">
                         온도를 입력하고<br>예상하는 동작을 선택해 주세요!
@@ -417,7 +417,7 @@
 
             switch(state) {
                 case 'hot':
-                    characterImage.src = '../더운 코들새.png';
+                    characterImage.src = 'image/더운 코들새.png';
                     character.classList.add('shaking');
                     speechBubble.textContent = message || '너무 더워요! 🥵';
                     speechBubble.style.borderColor = '#ef4444';
@@ -438,7 +438,7 @@
 
                 case 'cold':
                     // 추운 코들새 이미지 사용
-                    characterImage.src = '../추운 코들새.png';
+                    characterImage.src = 'image/추운 코들새.png';
                     character.classList.add('shivering');
                     speechBubble.textContent = message || '너무 추워요! 🥶';
                     speechBubble.style.borderColor = '#3b82f6';
@@ -462,7 +462,7 @@
                     break;
 
                 case 'happy':
-                    characterImage.src = '../신난 코들새.png';
+                    characterImage.src = 'image/신난 코들새.png';
                     character.classList.add('bouncing');
                     speechBubble.textContent = message || '시원해요! 😊';
                     speechBubble.style.borderColor = '#10b981';
@@ -479,7 +479,7 @@
                     break;
 
                 default:
-                    characterImage.src = '../그냥 코들새.png';
+                    characterImage.src = 'image/그냥 코들새.png';
                     if (message && message.includes('-30도에서 40도')) {
                         speechBubble.textContent = message;
                     } else {
@@ -540,7 +540,7 @@
                         showFeedback('🤔 다시 생각해 보세요. 조건에 맞는 행동을 선택해야 합니다.', 'error', feedback);
                         // 오답일 때 돋보기 코들새 + 좌우 반전
                         const characterImage = document.getElementById('characterImage');
-                        characterImage.src = '../돋보기 코들새.png';
+                        characterImage.src = 'image/돋보기 코들새.png';
                         characterImage.classList.add('flip');
                         document.getElementById('speechBubble').textContent = '다시 한번 생각해 보세요!';
                         document.getElementById('speechBubble').style.borderColor = '#ef4444';
