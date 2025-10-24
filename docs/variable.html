@@ -672,7 +672,7 @@
 
                         <div class="character" id="gameCharacter">
                             <div class="character-body">
-                                <img src="https://raw.githubusercontent.com/leehj002/entry/main/%EC%BD%94%EB%93%A4%20%EC%BA%90%EB%A6%AD%ED%84%B0-07.png" alt="캐릭터" class="character-image">
+                                <img src="image/코들 캐릭터-07.png" alt="캐릭터" class="character-image">
                             </div>
                         </div>
                     </div>
@@ -862,9 +862,22 @@
                         result.innerHTML += `💊 체력 회복: ${oldHealth} → ${health}<br>`;
                         animateVariableChange('healthStat', 'healthValue', health);
 
-                        // 회복 애니메이션
+                        // 회복 애니메이션 - 위로 점프하면서 회전
+                        gsap.timeline()
+                            .to(character, {
+                                y: -30,
+                                rotation: 360,
+                                duration: 0.4,
+                                ease: "power2.out"
+                            })
+                            .to(character, {
+                                y: 0,
+                                duration: 0.3,
+                                ease: "bounce.out"
+                            });
+
                         gsap.to(characterBody, {
-                            filter: "hue-rotate(120deg) brightness(1.2)",
+                            filter: "hue-rotate(120deg) brightness(1.3)",
                             duration: 0.3,
                             yoyo: true,
                             repeat: 1
