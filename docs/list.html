@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리스트(List) 배우기 - 과일 가게</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif;
+            background-color: #b1d9ad;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c5f2d;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+
+        .belt-section {
+            flex: 1;
+            background: linear-gradient(to bottom, #4a5568 0%, #4a5568 15%, #2d3748 15%, #2d3748 85%, #4a5568 85%, #4a5568 100%);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            height: 500px;
+        }
+
+        .belt-section::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 15%;
+            height: 70%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 30px,
+                rgba(255, 255, 255, 0.1) 30px,
+                rgba(255, 255, 255, 0.1) 35px
+            );
+            pointer-events: none;
+        }
+
+        .checkout-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            height: 500px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #2c5f2d;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .belt-section h2 {
+            color: #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .checkout-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .belt-items {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .belt-item {
+            background: white;
+            border: 2px solid #2c5f2d;
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            width: 100%;
+        }
+
+        .belt-item:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .belt-item:active {
+            cursor: grabbing;
+        }
+
+        .belt-item.dragging {
+            opacity: 0.5;
+        }
+
+        .belt-item.scanned {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s;
+        }
+
+        .belt-item-emoji {
+            font-size: 35px;
+            margin-bottom: 5px;
+        }
+
+        .belt-item-name {
+            font-size: 14px;
+            color: #2c5f2d;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .belt-item-price {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .scan-area {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px dashed #fbbf24;
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .scan-area.drag-over {
+            background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+            border-color: #f59e0b;
+            transform: scale(1.02);
+        }
+
+        .scan-icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .scan-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #92400e;
+        }
+
+        .scan-subtext {
+            font-size: 11px;
+            color: #78350f;
+            margin-top: 2px;
+        }
+
+        .scanning-animation {
+            animation: scan 0.5s ease;
+        }
+
+        .receipt-area {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c5f2d;
+        }
+
+        .receipt-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .receipt-items {
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dotted #ccc;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .receipt-item-left {
+            display: flex;
+            gap: 10px;
+        }
+
+        .receipt-item-index {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .receipt-footer {
+            border-top: 2px dashed #333;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        .receipt-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c5f2d;
+        }
+
+        .receipt-count {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-size: 16px;
+        }
+
+        .belt-section .empty-message {
+            color: #e2e8f0;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4a7c4e;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes scan {
+            0% {
+                border-color: #fbbf24;
+            }
+            50% {
+                border-color: #f59e0b;
+                box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+                transform: scale(1.05);
+            }
+            100% {
+                border-color: #fbbf24;
+            }
+        }
+
+        .scanning-animation {
+            animation: scan 0.5s ease;
+        }
+
+        .btn-reset {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nanum Gothic', sans-serif;
+            margin-top: 10px;
+            align-self: center;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast"></div>
+
+    <div class="section">
+        <h1>💰 계산대 체험! 내 손으로 영수증 만들기</h1>
+
+        <div class="main-container">
+            <!-- 계산대 -->
+            <div class="belt-section">
+                <h2>🏪 계산대</h2>
+                <div class="belt-items" id="beltItems">
+                    <!-- 여기에 과일들이 동적으로 추가됨 -->
+                </div>
+
+                <div class="scan-area" id="scanArea">
+                    <div class="scan-icon">📊</div>
+                    <div class="scan-text">바코드 스캔 영역</div>
+                    <div class="scan-subtext">과일을 여기로 드래그하세요!</div>
+                </div>
+            </div>
+
+            <!-- 영수증 -->
+            <div class="checkout-section">
+                <div class="receipt-area" id="receiptArea">
+                    <div class="receipt-header">
+                        <div class="receipt-title">🧾 영수증</div>
+                    </div>
+                    <div class="empty-message">과일을 스캔하면 여기에 출력됩니다!</div>
+                </div>
+                <button class="btn-reset" onclick="resetReceipt()">🔄 다시 시작</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 과일 데이터
+        const fruits = [
+            { name: '사과', price: 1000, emoji: '🍎' },
+            { name: '바나나', price: 1500, emoji: '🍌' },
+            { name: '딸기', price: 2000, emoji: '🍓' },
+            { name: '포도', price: 2500, emoji: '🍇' },
+            { name: '수박', price: 5000, emoji: '🍉' },
+            { name: '오렌지', price: 1200, emoji: '🍊' }
+        ];
+
+        // 영수증 리스트 (스캔된 아이템)
+        let scannedItems = [];
+        let draggedItem = null;
+        let draggedElement = null;
+
+        // 토스트 메시지
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 컨베이어 벨트 초기화
+        function initBelt() {
+            const beltContainer = document.getElementById('beltItems');
+            beltContainer.innerHTML = '';
+
+            fruits.forEach((fruit, index) => {
+                const beltItem = document.createElement('div');
+                beltItem.className = 'belt-item';
+                beltItem.draggable = true;
+                beltItem.dataset.name = fruit.name;
+                beltItem.dataset.price = fruit.price;
+                beltItem.dataset.emoji = fruit.emoji;
+                beltItem.id = `fruit-${index}`;
+
+                beltItem.innerHTML = `
+                    <div class="belt-item-emoji">${fruit.emoji}</div>
+                    <div class="belt-item-name">${fruit.name}</div>
+                    <div class="belt-item-price">${fruit.price.toLocaleString()}원</div>
+                `;
+
+                // 드래그 이벤트
+                beltItem.addEventListener('dragstart', handleDragStart);
+                beltItem.addEventListener('dragend', handleDragEnd);
+
+                beltContainer.appendChild(beltItem);
+            });
+        }
+
+        // 드래그 시작
+        function handleDragStart(e) {
+            draggedItem = {
+                name: this.dataset.name,
+                price: parseInt(this.dataset.price),
+                emoji: this.dataset.emoji
+            };
+            draggedElement = this;
+            this.classList.add('dragging');
+        }
+
+        // 드래그 종료
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        // 스캔 영역 드래그 오버
+        const scanArea = document.getElementById('scanArea');
+        scanArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            scanArea.classList.add('drag-over');
+        });
+
+        scanArea.addEventListener('dragleave', (e) => {
+            scanArea.classList.remove('drag-over');
+        });
+
+        // 스캔 영역 드롭
+        scanArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            scanArea.classList.remove('drag-over');
+
+            if (draggedItem && draggedElement) {
+                // 스캔 애니메이션
+                scanArea.classList.add('scanning-animation');
+                setTimeout(() => {
+                    scanArea.classList.remove('scanning-animation');
+                }, 500);
+
+                // 리스트에 추가
+                scannedItems.push(draggedItem);
+                showToast(`📊 ${draggedItem.emoji} ${draggedItem.name} 스캔 완료!`);
+
+                // 계산대에서 사라지게
+                draggedElement.classList.add('scanned');
+                setTimeout(() => {
+                    draggedElement.style.display = 'none';
+                }, 300);
+
+                // 영수증 업데이트
+                updateReceipt();
+
+                draggedItem = null;
+                draggedElement = null;
+            }
+        });
+
+        // 영수증 업데이트
+        function updateReceipt() {
+            const receiptArea = document.getElementById('receiptArea');
+
+            if (scannedItems.length === 0) {
+                receiptArea.innerHTML = `
+                    <div class="receipt-header">
+                        <div class="receipt-title">🧾 영수증</div>
+                    </div>
+                    <div class="empty-message">과일을 스캔하면 여기에 출력됩니다!</div>
+                `;
+                return;
+            }
+
+            const now = new Date();
+            const dateString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            let total = 0;
+            let itemsHTML = '';
+
+            scannedItems.forEach((item, index) => {
+                total += item.price;
+                itemsHTML += `
+                    <div class="receipt-item">
+                        <div class="receipt-item-left">
+                            <span class="receipt-item-index">${index + 1}.</span>
+                            <span>${item.emoji} ${item.name}</span>
+                        </div>
+                        <span>${item.price.toLocaleString()}원</span>
+                    </div>
+                `;
+            });
+
+            receiptArea.innerHTML = `
+                <div class="receipt-header">
+                    <div class="receipt-title">🧾 영수증</div>
+                    <div class="receipt-date">${dateString}</div>
+                </div>
+                <div class="receipt-items">
+                    ${itemsHTML}
+                </div>
+                <div class="receipt-footer">
+                    <div class="receipt-total">
+                        <span>총 금액:</span>
+                        <span>${total.toLocaleString()}원</span>
+                    </div>
+                    <div class="receipt-count">총 ${scannedItems.length}개 항목</div>
+                </div>
+            `;
+        }
+
+        // 리셋 함수
+        function resetReceipt() {
+            scannedItems = [];
+            updateReceipt();
+            initBelt(); // 계산대 과일들 다시 초기화
+        }
+
+        // 페이지 로드 시 컨베이어 벨트 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            initBelt();
+        });
+    </script>
+</body>
+</html>
